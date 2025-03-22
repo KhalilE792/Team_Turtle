@@ -1,0 +1,25 @@
+GET http://localhost:3000/subscribers
+
+### 
+GET http://localhost:3000/subscribers/67dee9dc88019b40a619ee85
+
+### 
+
+POST http://localhost:3000/subscribers
+Content-Type: application/json
+
+{
+    "name": "John Pork",
+    "subscribedToChannel": "Ur MOM!!!"
+}
+
+### 
+DELETE http://localhost:3000/subscribers/67dee7fe75e2b965b0eae57a
+
+### 
+PATCH http://localhost:3000/subscribers/67deefd1cf32cc42d5bda760
+Content-Type: application/json
+
+{
+    "name": "Vinh Le"
+}
