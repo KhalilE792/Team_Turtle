@@ -5,8 +5,8 @@ const Transaction = require('../models/transaction')
 // Getting all
 router.get('/', async (req,res) => {
     try {
-        const subscribers = await Transaction.find()
-        res.json(subscribers)
+        const transactions = await Transaction.find()
+        res.json(transactions)
     }
     catch (err) {
         res.status(500).json({message: err.message})
@@ -22,12 +22,18 @@ router.get('/:id', getTransactions, (req,res) => {
 // Creating one
 router.post('/', async (req,res) => {
     const transaction = new Transaction({
-        name: req.body.name,
-        subscribedToChannel: req.body.subscribedToChannel
+        user_id: req.body.user_id,
+        transaction_id: req.body.transaction_id,
+        transaction_time: req.body.transaction_time,
+        item_code: req.body.item_code,
+        item_description: req.body.item_description,
+        num_of_items_purchased: req.body.num_of_items_purchased,
+        cost_per_item: req.body.cost_per_item,
+        country: req.body.country
     })
     try {
-        const newSubscriber = await transaction.save()
-        res.status(201).json(newSubscriber)
+        const newTransaction = await transaction.save()
+        res.status(201).json(newTransaction)
     }
     catch (err) {
         res.status(400).json({message: err.message})
