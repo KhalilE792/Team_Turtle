@@ -1,0 +1,28 @@
+GET http://localhost:3000/transactions
+
+### 
+GET http://localhost:3000/transactions/67df3d2e39c8d73b44a2b6fb
+
+### 
+
+POST http://localhost:3000/transactions
+Content-Type: application/json
+
+{
+  "date": "20-Aug-2020",
+  "description": "Cheque",
+  "deposits": "3,391.02",
+  "withdrawals": "00.00",
+  "balance": "83,839.30"
+}
+
+### 
+DELETE http://localhost:3000/transactions/67dee7fe75e2b965b0eae57a
+
+### 
+PATCH http://localhost:3000/transactions/67deefd1cf32cc42d5bda760
+Content-Type: application/json
+
+{
+    "name": "Vinh Le"
+}
