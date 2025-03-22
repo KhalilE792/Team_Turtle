@@ -1,11 +1,11 @@
 const express = require('express')
 const router = express.Router()
-const Subscriber = require('../models/subscriber')
+const Transaction = require('../models/transaction')
 
 // Getting all
 router.get('/', async (req,res) => {
     try {
-        const subscribers = await Subscriber.find()
+        const subscribers = await Transaction.find()
         res.json(subscribers)
     }
     catch (err) {
@@ -15,18 +15,18 @@ router.get('/', async (req,res) => {
 })
 
 // Getting one
-router.get('/:id', getSubscriber, (req,res) => {
-    res.send(res.subscriber.name)
+router.get('/:id', getTransactions, (req,res) => {
+    res.send(res.transaction.name)
 
 })
 // Creating one
 router.post('/', async (req,res) => {
-    const subscriber = new Subscriber({
+    const transaction = new Transaction({
         name: req.body.name,
         subscribedToChannel: req.body.subscribedToChannel
     })
     try {
-        const newSubscriber = await subscriber.save()
+        const newSubscriber = await transaction.save()
         res.status(201).json(newSubscriber)
     }
     catch (err) {
@@ -35,15 +35,15 @@ router.post('/', async (req,res) => {
 
 })
 // Updating one
-router.patch('/:id', getSubscriber, async (req,res) => {
+router.patch('/:id', getTransactions, async (req,res) => {
     if(req.body.name != null) {
-        res.subscriber.name = req.body.name
+        res.transaction.name = req.body.name
     }
     if(req.body.subscribedToChannel!= null) {
-        res.subscriber.subscribedToChannel= req.body.subscribedToChannel
+        res.transaction.subscribedToChannel= req.body.subscribedToChannel
     }
     try {
-        const updatedSubscriber = await res.subscriber.save()
+        const updatedSubscriber = await res.transaction.save()
         res.json(updatedSubscriber)
     }
     catch (err) {
@@ -53,10 +53,10 @@ router.patch('/:id', getSubscriber, async (req,res) => {
 })
 
 // Deleting One
-router.delete('/:id', getSubscriber, async (req,res) => {
+router.delete('/:id', getTransactions, async (req,res) => {
     try {
-        await res.subscriber.deleteOne()
-        res.json({message: 'subscriber deleted.'})
+        await res.transaction.deleteOne()
+        res.json({message: 'transaction deleted.'})
     }
     catch (err){
         res.status(500).json({message: err.message})
@@ -64,19 +64,19 @@ router.delete('/:id', getSubscriber, async (req,res) => {
 
 })
 
-async function getSubscriber(req,res,next) {
-    let subscriber
+async function getTransactions(req,res,next) {
+    let transaction
     try {
-        subscriber = await Subscriber.findById(req.params.id)
-        if  (subscriber == null) {
-            return res.status(404).json({message: 'Cannot find Subscriber'})
+        transaction = await Transaction.findById(req.params.id)
+        if  (transaction == null) {
+            return res.status(404).json({message: 'Cannot find Transaction'})
         }
     }
     catch (err){
         return res.status(500).json({message: err.message})
 
     }
-    res.subscriber = subscriber
+    res.transaction = transaction
     next()
 
 }
