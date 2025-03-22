@@ -2,15 +2,14 @@ const express = require('express')
 const router = express.Router()
 const bcrypt = require('bcrypt')
 const passport = require('passport')
+const User = require('../models/user')
 
 const initializePassport = require('../passport-config')
 initializePassport(
     passport,
-    email => users.find(user => user.email === email),
-    id => users.find(user => user.id === id)
+    async email => await User.findOne({ email: email }),
+    async id => await User.findById(id)
 )
-
-const users = []
 
 router.get('/', checkAuthenticated, (req, res) => {
     res.render('index.ejs', { name: req.user.name })
@@ -33,23 +32,23 @@ router.get('/register', checkNotAuthenticated, (req, res) => {
 router.post('/register', checkNotAuthenticated, async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
-        users.push({
-            id: Date.now().toString(),
+        const user = new User({
             name: req.body.name,
             email: req.body.email,
             password: hashedPassword
         })
+        await user.save()
         res.redirect('/login')
-    } catch {
+    } catch (error) {
+        console.error('Registration error:', error)
         res.redirect('/register')
-        console.log('Did not input new user')
     }
 })
 
-router.post('/logout', function (req, res, next) {
-    req.logout(function (err) {
-        if (err) { return next(err) }
-        res.redirect('/')
+router.post('/logout', (req, res) => {
+    req.logout(function(err) {
+        if (err) { return next(err); }
+        res.redirect('/login')
     })
 })
 
@@ -57,7 +56,6 @@ function checkAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return next()
     }
-
     res.redirect('/login')
 }
 
