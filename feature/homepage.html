@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="homepage.css">
+    <title>Buttons</title>
+    <style>
+      .button {
+        display: inline-block;
+        padding: 10px 10px;
+        font-size: 20px;
+        cursor: pointer;
+        text-decoration: none;
+        outline: none;
+        border: none;
+        border-radius: 5px;
+        margin-top: 20%;
+        margin-bottom: 60%;
+        margin-left: 30px;    
+        color: #fff;
+        background-color: #007bff;
+      }
+      .button-container {
+          display: flex;
+          justify-content: flex-end;   /* Aligns buttons to the right */
+          align-items: center;         /* Optional: Centers buttons vertically */
+          gap: 10px;                   /* Optional: Adds space between buttons */
+        }
+
+      .button:hover {
+        background-color: #0056b3;
+      }
+      .button:active {
+        background-color: #004085;
+      }
+      .rectangle{
+        width: 300px;
+        height: 275px;
+        align-content: center;
+        top: 10%;
+        left: 42%;
+        position: absolute;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 align="center"> Your moneygotchi</h1>
+    <button class="button" style="background-color: #28a745;">Stats Button</button>
+    <button class="button" style="background-color: #007bff;">Update Button</button>
+    <button class="button" style="background-color: #dc3545;">Fortune Teller Button</button>
+    <div class ="rectangle" style= "background-color:gray">Place Holder for tomagostchi</div>
+
+    
+</body>
+</html>
+
+
