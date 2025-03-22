@@ -1,23 +1,26 @@
 GET http://localhost:3000/transactions
 
 ### 
-GET http://localhost:3000/subscribers/67dee9dc88019b40a619ee85
+GET http://localhost:3000/transactions/67dee9dc88019b40a619ee85
 
 ### 
 
-POST http://localhost:3000/subscribers
+POST http://localhost:3000/transactions
 Content-Type: application/json
 
 {
-    "name": "John Pork",
-    "subscribedToChannel": "Ur MOM!!!"
+  "date": "20-Aug-2020",
+  "description": "Cheque",
+  "deposits": "3,391.02",
+  "withdrawals": "00.00",
+  "balance": "83,839.30"
 }
 
 ### 
-DELETE http://localhost:3000/subscribers/67dee7fe75e2b965b0eae57a
+DELETE http://localhost:3000/transactions/67dee7fe75e2b965b0eae57a
 
 ### 
-PATCH http://localhost:3000/subscribers/67deefd1cf32cc42d5bda760
+PATCH http://localhost:3000/transactions/67deefd1cf32cc42d5bda760
 Content-Type: application/json
 
 {

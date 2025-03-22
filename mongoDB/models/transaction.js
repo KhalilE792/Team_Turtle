@@ -1,42 +1,26 @@
 const mongoose = require('mongoose')
 
 const transactionSchema = new mongoose.Schema({
-    user_id: {
-        type: Number,
+    date: {
+        type: String, 
         required: true
-
     },
-    transaction_id: {
-        type: Number,
+    description: {
+        type: String, 
         required: true
-
     },
-    transaction_time: {
-        type: Date,
-        required: true,
-
+    deposits: {
+        type: String, 
+        default: 0
     },
-    item_code: {
-        type: Number,
-        required: true,
-    },
-    item_description: {
+    withdrawals: {
         type: String,
-        required: true,
+        default: 0
     },
-    num_of_items_purchased: {
-        type: Number,
-        required: true,
-    },
-    cost_per_item: {
-        type: Double,
-        required: true,
-    },
-    country: {
+    balance: {
         type: String,
-        required: true,
+        equired: true
     }
-    
 })
 
 module.exports = mongoose.model('Transaction', transactionSchema)

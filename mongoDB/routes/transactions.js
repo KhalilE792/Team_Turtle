@@ -22,14 +22,11 @@ router.get('/:id', getTransactions, (req,res) => {
 // Creating one
 router.post('/', async (req,res) => {
     const transaction = new Transaction({
-        user_id: req.body.user_id,
-        transaction_id: req.body.transaction_id,
-        transaction_time: req.body.transaction_time,
-        item_code: req.body.item_code,
-        item_description: req.body.item_description,
-        num_of_items_purchased: req.body.num_of_items_purchased,
-        cost_per_item: req.body.cost_per_item,
-        country: req.body.country
+        date: req.body.date,
+        description: req.body.description,
+        deposits: req.body.deposits,
+        withdrawals: req.body.withdrawals,
+        balance: req.body.balance
     })
     try {
         const newTransaction = await transaction.save()
