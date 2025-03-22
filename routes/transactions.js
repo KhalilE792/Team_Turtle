@@ -16,7 +16,7 @@ router.get('/', async (req,res) => {
 
 // Getting one
 router.get('/:id', getTransactions, (req,res) => {
-    res.send(res.transaction.name)
+    res.send(res.transaction)
 
 })
 // Creating one
