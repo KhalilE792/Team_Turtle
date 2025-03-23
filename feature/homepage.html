@@ -13,14 +13,16 @@
         cursor: pointer;
         text-decoration: none;
         outline: none;
-        border: none;
-        border-radius: 5px;
+        border: solid;
+        border-width: 1px;
+        border-radius: calc(infinity * 1px);
         margin-top: 20%;
         margin-bottom: 25%; /*change back to 25% later!!!!*/
-        margin-left: 30px;    
+         
         color: #fff;
         background-color: #007bff;
-        height: 100%;
+        width: fit-content;
+        height: fit-content;
         background-position:center;
         background-repeat:no-repeat;
         background-size:cover;
@@ -61,13 +63,15 @@
         padding: 0;
       }
     </style>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <i data-lucide="menu"></i>
   </head>
   <body>
     <div class ="rectangle" style= "background-color:white">Moneygotchi</div>
       <div class="button-container">
-        <button class="button" style="background-color: #28a745;">Stats Button</button>
-        <button class="button" style="background-color: #007bff;">Update Button</button>
-        <button class="button" style="background-color: #dc3545;">Fortune Teller Button</button> 
+        <button class="button" style="background-color: #28a745;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-line"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></svg></button>
+        <button class="button" style="background-color: #007bff;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-plus"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg></button>
+        <button class="button" style="background-color: #dc3545;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg></button> 
     <a href="Green White Pixel Illustrated Blank Note A4 Document.png"></a>
 </body>
 </html>
