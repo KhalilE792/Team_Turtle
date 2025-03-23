@@ -15,19 +15,16 @@ initializePassport(
 
 // Main pages (protected by authentication)
 router.get('/', checkAuthenticated, (req, res) => {
-    res.sendFile('html/LoginPage.html', { root: 'public' })
+    res.sendFile('html/homepage.html', { root: 'public' })
 })
 
 router.get('/stats', checkAuthenticated, (req, res) => {
     res.sendFile('html/Stats.html', { root: 'public' })
 })
 
+// Add this route with your other protected routes
 router.get('/fortune', checkAuthenticated, (req, res) => {
     res.sendFile('html/FortuneTeller.html', { root: 'public' })
-})
-
-router.get('/interact', checkAuthenticated, (req, res) => {
-    res.sendFile('html/Interact.html', { root: 'public' })
 })
 
 // Authentication routes
@@ -37,6 +34,7 @@ router.get('/login', checkNotAuthenticated, (req, res) => {
 
 router.post('/login', checkNotAuthenticated, passport.authenticate('local', {
     successRedirect: '/',
+    failureRedirect: '/login',
     failureMessage: true
 }))
 
