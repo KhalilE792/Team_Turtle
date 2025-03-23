@@ -1,0 +1,11 @@
+### Get statistics page
+GET http://localhost:3000/transactions/stats
+
+### Get weekly data
+GET http://localhost:3000/transactions/week
+
+### Get monthly data
+GET http://localhost:3000/transactions/month/Mar/2024
+
+### Get yearly data
+GET http://localhost:3000/transactions/year/2024 

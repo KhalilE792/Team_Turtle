@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "devStart": "nodemon login.js"
+    "setup": "bash setup-public.sh",
+    "devStart": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
