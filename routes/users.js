@@ -22,24 +22,27 @@ router.get('/stats', checkAuthenticated, (req, res) => {
     res.sendFile('html/Stats.html', { root: 'public' })
 })
 
-// Add this route with your other protected routes
 router.get('/fortune', checkAuthenticated, (req, res) => {
     res.sendFile('html/FortuneTeller.html', { root: 'public' })
 })
 
+router.get('/interact', checkAuthenticated, (req, res) => {
+    res.sendFile('html/Interact.html', { root: 'public' })
+})
+
 // Authentication routes
 router.get('/login', checkNotAuthenticated, (req, res) => {
-    res.render('login.ejs')
+    res.sendFile('html/login.html', { root: 'public' })
 })
 
 router.post('/login', checkNotAuthenticated, passport.authenticate('local', {
     successRedirect: '/',
     failureRedirect: '/login',
-    failureFlash: true
+    failureMessage: true
 }))
 
 router.get('/register', checkNotAuthenticated, (req, res) => {
-    res.render('register.ejs')
+    res.sendFile('html/register.html', { root: 'public' })
 })
 
 router.post('/register', checkNotAuthenticated, async (req, res) => {
@@ -54,7 +57,7 @@ router.post('/register', checkNotAuthenticated, async (req, res) => {
         res.redirect('/login')
     } catch (error) {
         console.error('Registration error:', error)
-        res.redirect('/register')
+        res.status(400).json({ error: 'Registration failed' })
     }
 })
 
