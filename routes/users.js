@@ -15,7 +15,7 @@ initializePassport(
 
 // Main pages (protected by authentication)
 router.get('/', checkAuthenticated, (req, res) => {
-    res.sendFile('html/homepage.html', { root: 'public' })
+    res.sendFile('html/LoginPage.html', { root: 'public' })
 })
 
 router.get('/stats', checkAuthenticated, (req, res) => {

@@ -1,26 +1,41 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moneygotchi</title>
-    <link rel="stylesheet" href="/css/homepage.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moneygotchi</title>
+<link rel="stylesheet" href="/css/homepage.css">
 </head>
 <body>
-    <h1>Moneygotchi</h1>
-    <div class="rectangle">
-    <img src="/images/normal_pig.png" alt="Moneygotchi Pig" class="pet-image">
+<h1>Moneygotchi</h1>
+<div class="rectangle">
+<img src="/images/normal_pig.png" alt="Moneygotchi Pig" class="pet-image">
 </div>
-    <div class="button-container">
-        <button class="button stats-button" aria-label="Stats">
-            <img src="/images/stats-icon.png" alt="Stats" class="button-icon">
-        </button>
-        <button class="button update-button" aria-label="Update">
-            <img src="/images/update-icon.png" alt="Update" class="button-icon">
-        </button>
-        <button class="button fortune-button" aria-label="Fortune Teller">
-            <img src="/images/fortune-icon.png" alt="Fortune Teller" class="button-icon">
-        </button>
-    </div>
+<div class="button-container">
+<button class="button stats-button" aria-label="Stats" id="stats-button">
+  <img src="/images/stats-icon.png" alt="Stats" class="button-icon">
+</button>
+<button class="button update-button" aria-label="Update" id="update-button">
+  <img src="/images/update-icon.png" alt="Update" class="button-icon">
+</button>
+<button class="button fortune-button" aria-label="Fortune Teller" id="fortune-button">
+  <img src="/images/fortune-icon.png" alt="Fortune Teller" class="button-icon">
+</button>
+</div>
+
+<script>
+  // Add click event listeners to buttons
+  document.getElementById('stats-button').addEventListener('click', function() {
+    window.location.href = '/html/stats.html';
+  });
+  
+  document.getElementById('update-button').addEventListener('click', function() {
+    window.location.href = '/update.html';
+  });
+  
+  document.getElementById('fortune-button').addEventListener('click', function() {
+    window.location.href = '/html/FortuneTeller.html';
+  });
+</script>
 </body>
 </html>

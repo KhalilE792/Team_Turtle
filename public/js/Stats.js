@@ -106,6 +106,21 @@ function generateFallbackData() {
     };
 }
 
+function calculateMedian(values) {
+    // Create a copy and sort the array
+    const sortedValues = [...values].sort((a, b) => a - b);
+    
+    const middle = Math.floor(sortedValues.length / 2);
+    
+    if (sortedValues.length % 2 === 0) {
+        // If even length, average the two middle values
+        return (sortedValues[middle - 1] + sortedValues[middle]) / 2;
+    } else {
+        // If odd length, return the middle value
+        return sortedValues[middle];
+    }
+}
+
 function loadJSONData() {
     console.log("1. Starting loadJSONData");
     const timeSelector = document.getElementById('timeSelector').value;
@@ -162,11 +177,13 @@ function calculateStats(values) {
     const average = sum / values.length;
     const highest = Math.max(...values);
     const total = sum;
+    const median = calculateMedian(values);
             
     return {
         average,
         highest,
-        total
+        total,
+        median
     };
 }
 
@@ -174,6 +191,10 @@ function updateStatsDisplay(stats) {
     document.getElementById('averageSpending').textContent = '$' + stats.average.toFixed(2);
     document.getElementById('highestSpending').textContent = '$' + stats.highest.toFixed(2);
     document.getElementById('totalSpending').textContent = '$' + stats.total.toFixed(2);
+    
+    // Store median in localStorage for use in the fortune teller
+    localStorage.setItem('medianSpending', stats.median.toFixed(2));
+    console.log("Median spending saved to localStorage:", stats.median.toFixed(2));
 }
 
 function updateChartDisplay() {
