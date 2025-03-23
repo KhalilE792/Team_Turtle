@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spending Tracker</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="/css/Stats.css">
+</head>
+<body>
+    <div class="home-button-container">
+        <a href="/" class="home-button">
+            <span class="home-icon">⌂</span> Home
+        </a>
+    </div>
+
+    <div class="container">
+        <h1>Spending Tracker</h1>
+        <div class="controls">
+            <label for="timeSelector">Select Time Period:</label>
+            <select id="timeSelector" onchange="updateChart()">
+                <option value="week">Week</option>
+                <option value="month">Month</option>
+                <option value="year">Year</option>
+            </select>
+        </div>
+        <div class="chart-section">
+            <div class="chart-container">
+                <canvas id="dataChart"></canvas>
+            </div>
+            <div class="chart-image">
+                <img src="/images/stats_pig.png" alt="Spending visualization" class="side-image">
+            </div>
+        </div>
+        <div class="stats-container">
+            <div class="stat-item">
+                <span class="stat-label">Average Spending:</span>
+                <span id="averageSpending" class="stat-value">$0.00</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Highest Spending:</span>
+                <span id="highestSpending" class="stat-value">$0.00</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Total Spending:</span>
+                <span id="totalSpending" class="stat-value">$0.00</span>
+            </div>
+        </div>
+        <div class="info">
+            <p>Track your spending patterns over different time periods.</p>
+        </div>
+    </div>
+
+    <script src="/js/Stats.js"></script>
+
+</html>

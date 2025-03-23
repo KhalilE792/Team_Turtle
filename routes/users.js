@@ -4,6 +4,7 @@ const router = express.Router()
 const bcrypt = require('bcrypt')
 const passport = require('passport')
 const User = require('../models/user')
+const path = require('path')
 
 const initializePassport = require('../passport-config')
 initializePassport(
@@ -12,10 +13,21 @@ initializePassport(
     async id => await User.findById(id)
 )
 
+// Main pages (protected by authentication)
 router.get('/', checkAuthenticated, (req, res) => {
-    res.render('index.ejs', { name: req.user.name })
+    res.sendFile('html/homepage.html', { root: 'public' })
 })
 
+router.get('/stats', checkAuthenticated, (req, res) => {
+    res.sendFile('html/Stats.html', { root: 'public' })
+})
+
+// Add this route with your other protected routes
+router.get('/fortune', checkAuthenticated, (req, res) => {
+    res.sendFile('html/FortuneTeller.html', { root: 'public' })
+})
+
+// Authentication routes
 router.get('/login', checkNotAuthenticated, (req, res) => {
     res.render('login.ejs')
 })
