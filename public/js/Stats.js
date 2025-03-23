@@ -32,34 +32,55 @@ function processTransactionsFromMongoDB(transactions) {
             const fullYear = '20' + year;
             const date = new Date(`${month} ${day}, ${fullYear}`);
 
-            // Get amount from withdrawals
+            // Get amount from either withdrawals or deposits
             let amount = 0;
-            if (transaction.withdrawals) {
+            
+            // Check withdrawals first
+            if (transaction.withdrawals && transaction.withdrawals !== '00.00') {
                 // Remove commas and convert to number
-                amount = parseFloat(transaction.withdrawals.replace(/,/g, '')) || 0;
+                amount = parseFloat(transaction.withdrawals.replace(/,/g, ''));
+                console.log(`Found withdrawal amount: ${amount} for date: ${transaction.date}`);
+            }
+            
+            // If no withdrawal, check deposits
+            if (amount === 0 && transaction.deposits && transaction.deposits !== '00.00') {
+                // Remove commas and convert to number
+                amount = parseFloat(transaction.deposits.replace(/,/g, ''));
+                console.log(`Found deposit amount: ${amount} for date: ${transaction.date}`);
             }
 
-            // Skip if amount is 0
-            if (amount <= 0) return;
+            // Skip if still no amount
+            if (!amount || isNaN(amount)) {
+                console.log(`No valid amount found for transaction on ${transaction.date}`);
+                return;
+            }
 
             // Update weekly data
             const dayOfWeek = date.getDay();
             const adjustedDayOfWeek = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
             result.week.values[adjustedDayOfWeek] += amount;
+            console.log(`Added ${amount} to day ${adjustedDayOfWeek} (${result.week.labels[adjustedDayOfWeek]})`);
 
             // Update monthly data
             const weekOfMonth = Math.min(3, Math.floor((parseInt(day) - 1) / 7));
             result.month.values[weekOfMonth] += amount;
+            console.log(`Added ${amount} to week ${weekOfMonth + 1}`);
 
             // Update yearly data
             const monthIndex = date.getMonth();
             result.year.values[monthIndex] += amount;
+            console.log(`Added ${amount} to month ${monthIndex} (${result.year.labels[monthIndex]})`);
 
         } catch (error) {
-            console.error("Error processing transaction:", error);
+            console.error("Error processing transaction:", error, transaction);
         }
     });
-            
+    
+    // Log final totals
+    console.log("Final weekly totals:", result.week.values);
+    console.log("Final monthly totals:", result.month.values);
+    console.log("Final yearly totals:", result.year.values);
+    
     return result;
 }
 
@@ -86,7 +107,7 @@ function generateFallbackData() {
 }
 
 function loadJSONData() {
-    console.log("Attempting to fetch transaction data from API...");
+    console.log("1. Starting loadJSONData");
     const timeSelector = document.getElementById('timeSelector').value;
     let endpoint;
             
@@ -101,41 +122,38 @@ function loadJSONData() {
             endpoint = `/transactions/month/${month}/${year}`;
             break;
         case 'year':
-            endpoint = `/transactions/year/${new Date().getFullYear()}`;
+            const currentYear = new Date().getFullYear();
+            endpoint = `/transactions/year/${currentYear}`;
             break;
         default:
             endpoint = '/transactions';
     }
+    
+    console.log("2. Fetching from endpoint:", endpoint);
 
     fetch(endpoint)
         .then(response => {
+            console.log("3. Got response:", response.status);
             if (!response.ok) {
                 throw new Error('Database response was not ok: ' + response.status);
             }
             return response.json();
         })
         .then(transactions => {
+            console.log("4. Received transactions:", transactions?.length);
             if (!transactions || transactions.length === 0) {
                 console.warn("No transactions found, using fallback data");
                 data = generateFallbackData();
             } else {
                 data = processTransactionsFromMongoDB(transactions);
             }
-
-            if (chart) {
-                updateChart();
-            } else {
-                initChart();
-            }
+            console.log("5. Processed data:", data);
+            updateChartDisplay();
         })
         .catch(error => {
             console.error('Error loading from database:', error);
             data = generateFallbackData();
-            if (chart) {
-                updateChart();
-            } else {
-                initChart();
-            }
+            updateChartDisplay();
         });
 }
 
@@ -158,10 +176,47 @@ function updateStatsDisplay(stats) {
     document.getElementById('totalSpending').textContent = '$' + stats.total.toFixed(2);
 }
 
+function updateChartDisplay() {
+    console.log("6. Starting updateChartDisplay");
+    const selectedPeriod = document.getElementById('timeSelector').value;
+    console.log("7. Selected period:", selectedPeriod);
+    console.log("8. Current data:", data);
+    
+    if (!chart) {
+        console.log("9. No chart exists, initializing...");
+        initChart();
+        return;
+    }
+
+    const titleText = selectedPeriod.charAt(0).toUpperCase() + selectedPeriod.slice(1) + 'ly Spending';
+    chart.options.plugins.title.text = titleText;
+    
+    console.log("10. Updating chart with:", {
+        labels: data[selectedPeriod].labels,
+        values: data[selectedPeriod].values
+    });
+    
+    chart.data.labels = data[selectedPeriod].labels;
+    chart.data.datasets[0].data = data[selectedPeriod].values;
+    
+    const stats = calculateStats(data[selectedPeriod].values);
+    updateStatsDisplay(stats);
+    
+    chart.update();
+    console.log("11. Chart update complete");
+}
+
 function initChart() {
+    console.log("12. Starting initChart");
     const ctx = document.getElementById('dataChart').getContext('2d');
+    if (!ctx) {
+        console.error("Could not get chart context");
+        return;
+    }
             
     const initialPeriod = 'week';
+    console.log("13. Initial data:", data[initialPeriod]);
+    
     const initialStats = calculateStats(data[initialPeriod].values);
     updateStatsDisplay(initialStats);
             
@@ -324,30 +379,10 @@ function initChart() {
     });
 }
 
-function updateChart() {
-    const timeSelector = document.getElementById('timeSelector');
-    const selectedPeriod = timeSelector.value;
-
-    loadJSONData();
-
-    const titleText = selectedPeriod.charAt(0).toUpperCase() + selectedPeriod.slice(1) + 'ly Spending';
-    chart.options.plugins.title.text = titleText;
-                 
-    chart.data.labels = data[selectedPeriod].labels;
-    chart.data.datasets[0].data = data[selectedPeriod].values;
-                 
-    const stats = calculateStats(data[selectedPeriod].values);
-    updateStatsDisplay(stats);
-                 
-    chart.update();
-}
+document.getElementById('timeSelector').addEventListener('change', loadJSONData);
 
 // Initialize when the page loads
 document.addEventListener('DOMContentLoaded', function() {
-    loadJSONData();
-});
-
-// Add event listener for time selector
-document.getElementById('timeSelector').addEventListener('change', function() {
+    console.log("14. DOM Content Loaded");
     loadJSONData();
 });
