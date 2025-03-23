@@ -577,4 +577,180 @@ input[type=number] {
         padding: 6px 10px;
         font-size: 0.8rem;
     }
+
+    /* Additional Mystical Effects for Fortune Teller */
+
+/* Crystal Ball Animation Enhancements */
+.idle-glow {
+    filter: drop-shadow(0 0 10px rgba(122, 104, 177, 0.6));
+}
+
+.quick-pulse {
+    animation: quick-pulse 1s ease-in-out;
+}
+
+.fortune-reveal {
+    animation: big-reveal 3s ease-in-out;
+}
+
+.image-reveal {
+    animation: image-glow 3s ease-in-out !important;
+}
+
+@keyframes quick-pulse {
+    0% {
+        filter: drop-shadow(0 0 10px rgba(122, 104, 177, 0.6));
+        transform: scale(1);
+    }
+    50% {
+        filter: drop-shadow(0 0 20px rgba(160, 120, 255, 0.9));
+        transform: scale(1.03);
+    }
+    100% {
+        filter: drop-shadow(0 0 10px rgba(122, 104, 177, 0.6));
+        transform: scale(1);
+    }
+}
+
+@keyframes big-reveal {
+    0% {
+        filter: drop-shadow(0 0 10px rgba(122, 104, 177, 0.6));
+        transform: scale(1);
+    }
+    20% {
+        filter: drop-shadow(0 0 25px rgba(160, 120, 255, 0.9));
+        transform: scale(1.05);
+    }
+    70% {
+        filter: drop-shadow(0 0 20px rgba(200, 150, 255, 0.8));
+        transform: scale(1.02);
+    }
+    100% {
+        filter: drop-shadow(0 0 15px rgba(122, 104, 177, 0.7));
+        transform: scale(1);
+    }
+}
+
+@keyframes image-glow {
+    0% {
+        opacity: 0.9;
+    }
+    50% {
+        opacity: 1;
+        filter: brightness(1.2) contrast(1.1);
+    }
+    100% {
+        opacity: 0.9;
+    }
+}
+
+/* Enhanced swirl animation */
+.swirl {
+    animation: swirl-motion 20s infinite alternate !important;
+}
+
+@keyframes swirl-motion {
+    0% {
+        stroke-dasharray: 0 15;
+        stroke-dashoffset: 0;
+        stroke: rgba(180, 180, 255, 0.3);
+    }
+    50% {
+        stroke: rgba(200, 150, 255, 0.6);
+    }
+    100% {
+        stroke-dasharray: 15 15;
+        stroke-dashoffset: -200;
+        stroke: rgba(220, 180, 255, 0.4);
+    }
+}
+
+/* Update Modal Enhancements */
+#update-modal .modal-content {
+    background: linear-gradient(to bottom, #252547, #1E1E38);
+    border: 1px solid #3a3a6a;
+}
+
+#update-modal h2 {
+    letter-spacing: 1px;
+    font-style: italic;
+}
+
+/* Result value styling */
+.result-value {
+    font-style: italic;
+}
+
+.fortune-text {
+    font-style: italic;
+    text-shadow: 0 0 8px rgba(201, 173, 255, 0.3);
+    border-left: 3px solid #8a6bbd;
+}
+
+/* Info Modal Enhancements */
+#info-modal h2 {
+    letter-spacing: 1px;
+    font-style: italic;
+}
+
+#info-modal .form-group label {
+    font-style: italic;
+    text-shadow: 0 0 5px rgba(201, 173, 255, 0.2);
+}
+
+/* Mystical notification */
+#mystical-notification {
+    position: fixed;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(to right, #4a2b75, #6b4da3);
+    color: #ffffff;
+    padding: 15px 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(122, 104, 177, 0.7);
+    transition: top 0.5s ease;
+    z-index: 1100;
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    text-align: center;
+    border: 1px solid #8a6bbd;
+}
+
+#mystical-notification.show {
+    top: 20px;
+}
+
+/* Reflection enhancements */
+.reflection {
+    animation: reflection-pulse 8s infinite alternate;
+}
+
+@keyframes reflection-pulse {
+    0% {
+        opacity: 0.5;
+        r: 8px;
+    }
+    100% {
+        opacity: 0.8;
+        r: 12px;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #mystical-notification {
+        width: 80%;
+        padding: 12px 20px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #mystical-notification {
+        width: 90%;
+        padding: 10px 15px;
+        font-size: 0.8rem;
+    }
+}
 }

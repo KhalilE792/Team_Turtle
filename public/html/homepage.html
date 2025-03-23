@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="/css/homepage.css">
 </head>
 <body>
+    <div class="logout-container">
+        <button class="logout-button" aria-label="Logout" id="logout-button">
+            <div class="logout-icon"></div>
+        </button>
+    </div>
+    
     <h1>Moneygotchi</h1>
 <div class="rectangle">
     <!-- Health bar positioned in upper left corner -->
@@ -36,9 +42,9 @@
 </div>
 <script>
 function checkFinancialHealth() {
-    // Get the saved data
+    // Get the saved financial data and weekly median spending
     const savedData = JSON.parse(localStorage.getItem('financialData')) || [];
-    const medianSpending = parseFloat(localStorage.getItem('medianSpending') || '0');
+    const weeklyMedianSpending = parseFloat(localStorage.getItem('weeklyMedianSpending') || '0');
     
     // Default status if no data is available
     let status = 'normal';
@@ -47,70 +53,39 @@ function checkFinancialHealth() {
     // Log the data we're working with for debugging
     console.log("Financial health check:", {
         savedData: savedData,
-        medianSpending: medianSpending
+        weeklyMedianSpending: weeklyMedianSpending
     });
     
-    if (savedData.length > 0) {
+    if (savedData.length > 0 && weeklyMedianSpending > 0) {
         const latestData = savedData[savedData.length - 1];
         const annualIncome = parseInt(latestData.annualIncome) || 0;
-        const monthlyIncome = annualIncome / 12;
+        const weeklyIncome = annualIncome / 52; // Convert annual income to weekly
         
-        // Log monthly income for debugging
-        console.log("Monthly income:", monthlyIncome);
+        // Calculate weekly spending as percentage of weekly income
+        const spendingPercentage = (weeklyMedianSpending / weeklyIncome) * 100;
         
-        // If median spending data exists, use it
-        if (medianSpending > 0) {
-            // Calculate monthly values
-            const currentYear = new Date().getFullYear();
-            const yearsUntilRetirement = latestData.retirementYear - currentYear;
-            const monthsUntilRetirement = yearsUntilRetirement * 12;
-            
-            let monthlySavingsNeeded = 0;
-            if (monthsUntilRetirement > 0) {
-                monthlySavingsNeeded = parseInt(latestData.targetSavings) / monthsUntilRetirement;
-            } else {
-                monthlySavingsNeeded = parseInt(latestData.targetSavings);
-            }
-            
-            // Monthly metrics
-            const spendingPercentage = (medianSpending / monthlyIncome) * 100;
-            const savingsPercentage = (monthlySavingsNeeded / monthlyIncome) * 100;
-            const remainingPercentage = 100 - spendingPercentage - savingsPercentage;
-            
-            // Log all calculations for debugging
-            console.log("Financial calculations:", {
-                monthlySavingsNeeded: monthlySavingsNeeded,
-                spendingPercentage: spendingPercentage,
-                savingsPercentage: savingsPercentage,
-                remainingPercentage: remainingPercentage
-            });
-            
-            // Clear status determination based on remaining budget
-            if (remainingPercentage < 0) {
-                // In deficit - your expenses plus savings exceed income
-                status = 'bad';
-                healthPercentage = Math.max(10, 30 + remainingPercentage); // Min 10%, decreases with deficit
-            } else if (remainingPercentage < 15) {
-                // Very tight budget - less than 15% buffer
-                status = 'bad';
-                healthPercentage = 40;
-            } else if (remainingPercentage < 30) {
-                // Manageable but tight budget
-                status = 'normal';
-                healthPercentage = 60;
-            } else {
-                // Healthy budget with good buffer
-                status = 'good';
-                healthPercentage = 85;
-            }
-        } else {
-            // No spending data, but we have income data
+        console.log("Weekly financial calculations:", {
+            weeklyIncome: weeklyIncome,
+            weeklyMedianSpending: weeklyMedianSpending,
+            spendingPercentage: spendingPercentage
+        });
+        
+        // Simple status determination based on spending percentage
+        if (spendingPercentage > 70) {
+            // High spending - over 70% of weekly income
+            status = 'bad';
+            healthPercentage = Math.max(10, 40 - ((spendingPercentage - 70) / 3)); // decreases with higher spending
+        } else if (spendingPercentage > 40) {
+            // Medium spending - between 40-70% of weekly income
             status = 'normal';
-            healthPercentage = 50;
+            healthPercentage = 60;
+        } else {
+            // Low spending - under 40% of weekly income
+            status = 'good';
+            healthPercentage = 85;
         }
     }
     
-    // Log final determination
     console.log("Health status determined:", status, healthPercentage);
     
     return {
@@ -163,6 +138,12 @@ function showEmoji() {
     }, 3000);
 }
 
+// Listen for updates from stats page
+document.addEventListener('weeklyDataUpdated', function() {
+    console.log("Received weekly data update event");
+    updatePetStatus();
+});
+
 // Add click event listeners to buttons
 document.getElementById('stats-button').addEventListener('click', function() {
     window.location.href = '/html/stats.html';
@@ -172,17 +153,21 @@ document.getElementById('update-button').addEventListener('click', function() {
     // Show emoji animation
     showEmoji();
     
-    // Optional: refresh pet status when update button is clicked
+    // Refresh pet status when update button is clicked
     updatePetStatus();
-    
-    // Optional: if you still want to navigate to update page, add a delay
-    // setTimeout(function() {
-    //     window.location.href = '/update.html';
-    // }, 1500);
 });
 
 document.getElementById('fortune-button').addEventListener('click', function() {
     window.location.href = '/html/FortuneTeller.html';
+});
+
+// Add event listener for logout button
+document.getElementById('logout-button').addEventListener('click', function() {
+    // Clear user session data if needed
+    // localStorage.clear(); // Uncomment this if you want to clear all local storage
+    
+    // Redirect to login page
+    window.location.href = '/html/login.html'; // Adjust this to your login page URL
 });
 
 // Update pet status when the page loads

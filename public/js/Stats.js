@@ -164,12 +164,30 @@ function loadJSONData() {
             }
             console.log("5. Processed data:", data);
             updateChartDisplay();
+            
+            // Always calculate and store monthly median for Fortune Teller
+            storeMonthlyMedianForFortune();
         })
         .catch(error => {
             console.error('Error loading from database:', error);
             data = generateFallbackData();
             updateChartDisplay();
+            
+            // Calculate monthly median even with fallback data
+            storeMonthlyMedianForFortune();
         });
+}
+
+// Function to calculate and store monthly median regardless of current view
+function storeMonthlyMedianForFortune() {
+    if (data && data.month && data.month.values) {
+        const monthlyStats = calculateStats(data.month.values);
+        const monthlyMedian = monthlyStats.median;
+        
+        // Store monthly median specifically for Fortune Teller
+        localStorage.setItem('monthlyMedianSpending', monthlyMedian.toFixed(2));
+        console.log("Monthly median spending saved for Fortune Teller:", monthlyMedian.toFixed(2));
+    }
 }
 
 function calculateStats(values) {
@@ -192,9 +210,28 @@ function updateStatsDisplay(stats) {
     document.getElementById('highestSpending').textContent = '$' + stats.highest.toFixed(2);
     document.getElementById('totalSpending').textContent = '$' + stats.total.toFixed(2);
     
-    // Store median in localStorage for use in the fortune teller
+    // Get the current time period
+    const selectedPeriod = document.getElementById('timeSelector').value;
+    
+    // Store the median spending based on period
+    if (selectedPeriod === 'week') {
+        // Store weekly median spending specifically for Moneygotchi
+        localStorage.setItem('weeklyMedianSpending', stats.median.toFixed(2));
+        console.log("Weekly median spending saved:", stats.median.toFixed(2));
+        
+        // Dispatch an event to notify Moneygotchi that data has changed
+        try {
+            const event = new CustomEvent('weeklyDataUpdated');
+            document.dispatchEvent(event);
+            console.log("Weekly data update event dispatched");
+        } catch (error) {
+            console.error("Error dispatching event:", error);
+        }
+    }
+    
+    // For backward compatibility - keep the general medianSpending
     localStorage.setItem('medianSpending', stats.median.toFixed(2));
-    console.log("Median spending saved to localStorage:", stats.median.toFixed(2));
+    console.log(`${selectedPeriod} median spending saved to localStorage:`, stats.median.toFixed(2));
 }
 
 function updateChartDisplay() {
