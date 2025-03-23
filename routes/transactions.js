@@ -13,7 +13,6 @@ router.get('/year/:year', async (req, res) => {
             console.log('Total documents found:', docs.length)
             const filtered = docs.filter(doc => {
                 const dateParts = doc.date.split('-')
-                // Convert two-digit year to full year
                 const fullYear = '20' + dateParts[2]  // converts '25' to '2025'
                 return fullYear === year
             })
@@ -34,7 +33,7 @@ router.get('/month/:month/:year', async (req, res) => {
         const transactions = await Transaction.find().then(docs => {
             return docs.filter(doc => {
                 const dateParts = doc.date.split('-')
-                const fullYear = '20' + dateParts[2]  // converts '25' to '2025'
+                const fullYear = '20' + dateParts[2]  
                 return dateParts[1] === month && fullYear === year
             })
         })
@@ -54,17 +53,14 @@ router.get('/week', async (req, res) => {
             const date = new Date(today)
             date.setDate(today.getDate() - i) 
             
-            // Format the date parts
             const day = String(date.getDate()).padStart(2, '0') 
             const month = date.toLocaleString('en', { month: 'short' })
             const year = String(date.getFullYear()).slice(-2)
 
             
-            // Combine parts into "DD-MMM-YYYY" format
             dates.push(`${day}-${month}-${year}`)
         }
 
-        // Find transactions that match any of the dates in our array
         const transactions = await Transaction.find().then(docs => {
             return docs.filter(doc => dates.includes(doc.date))
         })
@@ -74,69 +70,82 @@ router.get('/week', async (req, res) => {
     }
 })
 
-// Getting all
-router.get('/', async (req,res) => {
+// Get all transactions for the logged-in user only
+router.get('/', checkAuthenticated, async (req, res) => {
     try {
-        const transactions = await Transaction.find()
+        const transactions = await Transaction.find({ user: req.user._id })
         res.json(transactions)
+    } catch (err) {
+        res.status(500).json({ message: err.message })
     }
-    catch (err) {
-        res.status(500).json({message: err.message})
-    }
-
 })
 
 // Getting one
-router.get('/:id', getTransactions, (req,res) => {
+router.get('/:id', getTransaction, (req,res) => {
     res.send(res.transaction)
-
 })
-// Creating one
-router.post('/', async (req,res) => {
+
+// Create new transaction with user ID
+router.post('/', checkAuthenticated, async (req, res) => {
     const transaction = new Transaction({
         date: req.body.date,
         description: req.body.description,
         deposits: req.body.deposits,
         withdrawals: req.body.withdrawals,
-        balance: req.body.balance
+        balance: req.body.balance,
+        user: req.user._id  
     })
+
     try {
         const newTransaction = await transaction.save()
         res.status(201).json(newTransaction)
+    } catch (err) {
+        res.status(400).json({ message: err.message })
     }
-    catch (err) {
-        res.status(400).json({message: err.message})
-    }
-
-})
-// Updating one
-router.patch('/:id', getTransactions, async (req,res) => {
-    if(req.body.name != null) {
-        res.transaction.name = req.body.name
-    }
-    if(req.body.subscribedToChannel!= null) {
-        res.transaction.subscribedToChannel= req.body.subscribedToChannel
-    }
-    try {
-        const updatedSubscriber = await res.transaction.save()
-        res.json(updatedSubscriber)
-    }
-    catch (err) {
-        res.status(400).json({message: err.message})
-    }
-
 })
 
-// Deleting One
-router.delete('/:id', getTransactions, async (req,res) => {
-    try {
-        await res.transaction.deleteOne()
-        res.json({message: 'transaction deleted.'})
-    }
-    catch (err){
-        res.status(500).json({message: err.message})
+// Update transaction 
+router.patch('/:id', checkAuthenticated, getTransaction, async (req, res) => {
+    if (res.transaction.user.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ message: 'Cannot modify other users transactions' })
     }
 
+    if (req.body.date != null) {
+        res.transaction.date = req.body.date
+    }
+    if (req.body.description != null) {
+        res.transaction.description = req.body.description
+    }
+    if (req.body.deposits != null) {
+        res.transaction.deposits = req.body.deposits
+    }
+    if (req.body.withdrawals != null) {
+        res.transaction.withdrawals = req.body.withdrawals
+    }
+    if (req.body.balance != null) {
+        res.transaction.balance = req.body.balance
+    }
+
+    try {
+        const updatedTransaction = await res.transaction.save()
+        res.json(updatedTransaction)
+    } catch (err) {
+        res.status(400).json({ message: err.message })
+    }
+})
+
+// Delete transaction 
+router.delete('/:id', checkAuthenticated, getTransaction, async (req, res) => {
+    if (res.transaction.user.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ message: 'Cannot delete other users transactions' })
+    }
+
+    try {
+        await res.transaction.remove()
+        res.json({ message: 'Deleted Transaction' })
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+    }
 })
 
 // Add this route to serve the Stats page
@@ -144,21 +153,28 @@ router.get('/stats', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/Stats.html'))
 })
 
-async function getTransactions(req,res,next) {
+// Middleware to get transaction
+async function getTransaction(req, res, next) {
     let transaction
     try {
         transaction = await Transaction.findById(req.params.id)
-        if  (transaction == null) {
-            return res.status(404).json({message: 'Cannot find Transaction'})
+        if (transaction == null) {
+            return res.status(404).json({ message: 'Cannot find transaction' })
         }
+    } catch (err) {
+        return res.status(500).json({ message: err.message })
     }
-    catch (err){
-        return res.status(500).json({message: err.message})
 
-    }
     res.transaction = transaction
     next()
+}
 
+// Authentication middleware
+function checkAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next()
+    }
+    res.status(401).json({ message: 'You need to be logged in' })
 }
 
 module.exports = router

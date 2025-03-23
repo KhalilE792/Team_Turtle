@@ -7,18 +7,23 @@ const transactionSchema = new mongoose.Schema({
     },
     description: {
         type: String, 
-        required: true
     },
     deposits: {
         type: String, 
-        default: 0
+        default: 0,
+        required: true
     },
     withdrawals: {
         type: String,
-        default: 0
+        default: 0,
+        required: true
     },
     balance: {
         type: String,
+    },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     }
 })

@@ -2,7 +2,7 @@ require('dotenv').config()
 const fs = require('fs')
 const csv = require('csv-parser')
 const mongoose = require('mongoose')
-const Transaction = require('../models/transaction')
+const Transaction = require('./models/transaction')
 
 mongoose.connect(process.env.DATABASE_URL)
 const db = mongoose.connection
@@ -12,13 +12,16 @@ db.once('open', () => console.log('Connected to Database'))
 async function importCSV() {
     console.log('starting importCSV...')
     try {
+        // Use the specific user ID
+        const userId = '67dfde5821608cbfd1ad0b8e'
+
         const results = []
         console.log('Starting CSV import...')
         
         await new Promise((resolve, reject) => {
             console.log('Reading CSV file...')
-            fs.createReadStream('./50000.csv')
-            // fs.createReadStream('./transaction-dataset.csv')
+            // fs.createReadStream('./csv/50000.csv')
+            fs.createReadStream('./csv/stableTrend.csv')
                 .pipe(csv())
                 .on('data', (data) => {
                     results.push(data)
@@ -39,7 +42,8 @@ async function importCSV() {
             description: row.description,
             deposits: row.deposits || '0',
             withdrawals: row.withdrawals || '0',
-            balance: row.balance
+            balance: row.balance,
+            user: userId  // Using the specific user ID
         }))
 
         console.log('Inserting into MongoDB...')

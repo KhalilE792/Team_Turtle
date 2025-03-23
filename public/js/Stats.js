@@ -124,25 +124,7 @@ function calculateMedian(values) {
 function loadJSONData() {
     console.log("1. Starting loadJSONData");
     const timeSelector = document.getElementById('timeSelector').value;
-    let endpoint;
-            
-    switch(timeSelector) {
-        case 'week':
-            endpoint = '/transactions/week';
-            break;
-        case 'month':
-            const date = new Date();
-            const month = date.toLocaleString('en', { month: 'short' });
-            const year = date.getFullYear();
-            endpoint = `/transactions/month/${month}/${year}`;
-            break;
-        case 'year':
-            const currentYear = new Date().getFullYear();
-            endpoint = `/transactions/year/${currentYear}`;
-            break;
-        default:
-            endpoint = '/transactions';
-    }
+    let endpoint = '/transactions'; // Changed to always use the main endpoint
     
     console.log("2. Fetching from endpoint:", endpoint);
 
@@ -150,6 +132,11 @@ function loadJSONData() {
         .then(response => {
             console.log("3. Got response:", response.status);
             if (!response.ok) {
+                if (response.status === 401) {
+                    // User is not authenticated, redirect to login
+                    window.location.href = '/login';
+                    return;
+                }
                 throw new Error('Database response was not ok: ' + response.status);
             }
             return response.json();
@@ -160,6 +147,7 @@ function loadJSONData() {
                 console.warn("No transactions found, using fallback data");
                 data = generateFallbackData();
             } else {
+                // The transactions are already filtered by user on the server side
                 data = processTransactionsFromMongoDB(transactions);
             }
             console.log("5. Processed data:", data);

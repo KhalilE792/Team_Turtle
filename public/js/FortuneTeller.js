@@ -34,36 +34,62 @@ function calculateMedian(values) {
 
 // Function to check if user is on track with their savings goals
 function checkSavingsProgress(monthlySavingsTarget) {
-    // Get the median spending from localStorage
-    const medianSpending = parseFloat(localStorage.getItem('medianSpending') || '0');
-    
-    // Get annual income for additional context
-    const savedData = JSON.parse(localStorage.getItem('financialData')) || [];
-    if (savedData.length === 0) return "No data available";
-    
-    const latestData = savedData[savedData.length - 1];
-    const monthlyIncome = parseInt(latestData.annualIncome) / 12;
-    
-    // Calculate what percentage of monthly income the savings target represents
-    const savingsPercentage = (monthlySavingsTarget / monthlyIncome) * 100;
-    
-    // Calculate what percentage of monthly income the median spending represents
-    const spendingPercentage = (medianSpending / monthlyIncome) * 100;
-    
-    // Check if user is on track based on their spending patterns
-    if (medianSpending === 0) {
-        return "No spending data available yet. Visit the Dashboard to generate data.";
-    } else if (monthlySavingsTarget > monthlyIncome) {
-        return "Your savings target exceeds your monthly income. Consider adjusting your goals or timeline.";
-    } else if (medianSpending + monthlySavingsTarget > monthlyIncome * 0.9) {
-        return "⚠️ CAUTION: Your typical spending plus savings target leaves little buffer in your budget.";
-    } else if (spendingPercentage > 70) {
-        return "⚠️ Your typical spending is high ("+spendingPercentage.toFixed(0)+"% of income). You may struggle to meet your savings goal.";
-    } else if (savingsPercentage > 40) {
-        return "🔍 Your savings target is ambitious ("+savingsPercentage.toFixed(0)+"% of income), but possible with discipline.";
-    } else {
-        return "✅ Based on your spending patterns, your savings goal appears achievable.";
-    }
+    // Get the median spending from the user's transactions
+    fetch('/transactions')
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 401) {
+                    window.location.href = '/login';
+                    return;
+                }
+                throw new Error('Failed to fetch transactions');
+            }
+            return response.json();
+        })
+        .then(transactions => {
+            if (!transactions || transactions.length === 0) {
+                return "No spending data available yet. Visit the Dashboard to generate data.";
+            }
+
+            // Calculate median spending from the user's transactions
+            const amounts = transactions.map(t => {
+                if (t.withdrawals && t.withdrawals !== '00.00') {
+                    return parseFloat(t.withdrawals.replace(/,/g, ''));
+                }
+                return 0;
+            }).filter(amount => amount > 0);
+
+            const medianSpending = calculateMedian(amounts);
+            
+            // Get annual income for additional context
+            const savedData = JSON.parse(localStorage.getItem('financialData')) || [];
+            if (savedData.length === 0) return "No financial data available";
+            
+            const latestData = savedData[savedData.length - 1];
+            const monthlyIncome = parseInt(latestData.annualIncome) / 12;
+            
+            // Calculate percentages and return appropriate message
+            const savingsPercentage = (monthlySavingsTarget / monthlyIncome) * 100;
+            const spendingPercentage = (medianSpending / monthlyIncome) * 100;
+            
+            if (medianSpending === 0) {
+                return "No spending data available yet. Visit the Dashboard to generate data.";
+            } else if (monthlySavingsTarget > monthlyIncome) {
+                return "Your savings target exceeds your monthly income. Consider adjusting your goals or timeline.";
+            } else if (medianSpending + monthlySavingsTarget > monthlyIncome * 0.9) {
+                return "⚠️ CAUTION: Your typical spending plus savings target leaves little buffer in your budget.";
+            } else if (spendingPercentage > 70) {
+                return `⚠️ Your typical spending is high (${spendingPercentage.toFixed(0)}% of income). You may struggle to meet your savings goal.`;
+            } else if (savingsPercentage > 40) {
+                return `🔍 Your savings target is ambitious (${savingsPercentage.toFixed(0)}% of income), but possible with discipline.`;
+            } else {
+                return "✅ Based on your spending patterns, your savings goal appears achievable.";
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching transactions:', error);
+            return "Error loading spending data. Please try again later.";
+        });
 }
 
 // Helper function to calculate fortune message
