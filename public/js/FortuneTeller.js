@@ -52,17 +52,17 @@ function checkSavingsProgress(monthlySavingsTarget) {
     
     // Check if user is on track based on their spending patterns - with mystical language
     if (medianSpending === 0) {
-        return "The celestial signs cannot yet read your spending patterns. Visit the Dashboard to reveal your financial aura.";
+        return "The celestial signs cannot yet read your spending patterns. Visit the stats page to reveal your financial aura.";
     } else if (monthlySavingsTarget > monthlyIncome) {
-        return "The stars show your desires exceed your mortal resources. Consider realigning your cosmic journey.";
+        return "The stars show your desires exceed your mortal resources. Consider realigning your cosmic journey and apply them on the stats page.";
     } else if (medianSpending + monthlySavingsTarget > monthlyIncome * 0.9) {
-        return "⚠️ The mystic energies reveal tension in your financial constellation. Your path leaves little room for fate's unexpected turns.";
+        return "⚠️ It has been revealeed that there's tension in your financial constellation. Your path leaves little room for fate's unexpected turns. Begin making changes in order to change your fate!";
     } else if (spendingPercentage > 70) {
-        return "⚠️ The crystal shows your treasures flow freely ("+spendingPercentage.toFixed(0)+"% of your wealth). The spirits warn of challenges in your quest.";
+        return "⚠️ The crystal shows your treasures flow freely ("+spendingPercentage.toFixed(0)+"% of your wealth). The spirits warn of  how these actitons present challenges in your reitrement quest.";
     } else if (savingsPercentage > 40) {
         return "🔮 The moon illuminates an ambitious journey ("+savingsPercentage.toFixed(0)+"% of your resources). With discipline, the stars shall align in your favor.";
     } else {
-        return "✨ The mystic energies are in harmony! Your chosen path appears blessed by the prosperity spirits.";
+        return "✨ The mystic energies are in harmony because of your actions! Your chosen path will come with many blessings by the prosperity spirits.";
     }
 }
 
