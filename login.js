@@ -14,7 +14,7 @@ const methodOverride = require('method-override')
 
 // MONGOOSE SERVER
 const mongoose = require('mongoose')
-mongoose.connect(process.env.DATABASE_URL)
+mongoose.connect(process.env.MONGODB_URI)
 const db = mongoose.connection
 db.on('error', (error) => console.error(error))
 db.once('open', () => console.log('Connected to Database!!!'))
@@ -43,4 +43,4 @@ app.use('/subscribers', subscribersRouter)
 const transactionsRouter = require('./routes/transactions')
 app.use('/transactions', transactionsRouter)
 
-app.listen(3000, () => console.log('Server Started'))
+app.listen(3002, () => console.log('Server Started'))

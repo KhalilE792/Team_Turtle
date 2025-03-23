@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login & Register · Bootstrap</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+ 
+  <style>
+    /* Center the form */
+    main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh; /* Full height of viewport */
+      padding: 20px 0;
+    }
+    /* Set max width for form to prevent stretching */
+    .form-signin {
+      max-width: 330px;
+      width: 100%;
+      padding: 15px;
+    }
+    /* Adjust spacing */
+    .form-signin img {
+      display: block;
+      margin: 0 auto 10px;
+    }
+    /* Tab content styling */
+    .tab-content > .tab-pane {
+      display: none;
+    }
+    .tab-content > .active {
+      display: block;
+    }
+    /* Success message styling */
+    .success-message {
+      display: none;
+      padding: 10px;
+      margin-bottom: 15px;
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      border-radius: 4px;
+      color: #155724;
+    }
+    /* Error message styling */
+    .error-message {
+      display: none;
+      padding: 10px;
+      margin-bottom: 15px;
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      border-radius: 4px;
+      color: #721c24;
+    }
+    /* Loading spinner */
+    .spinner-border {
+      display: none;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body class="bg-body-tertiary">
+  <main>
+    <div class="form-signin">
+      <img src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57">
+      <h1 class="h3 mb-3 fw-normal text-center">Welcome</h1>
+      
+      <!-- Success Message -->
+      <div id="successMessage" class="success-message text-center"></div>
+      
+      <!-- Error Message -->
+      <div id="errorMessage" class="error-message text-center"></div>
+      
+      <!-- Tab navigation -->
+      <ul class="nav nav-tabs nav-fill" id="authTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#loginForm" type="button" role="tab" aria-controls="loginForm" aria-selected="true">Sign In</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#registerForm" type="button" role="tab" aria-controls="registerForm" aria-selected="false">Register</button>
+        </li>
+      </ul>
+      
+      <!-- Tab content -->
+      <div class="tab-content" id="authTabsContent">
+        <!-- Login Form -->
+        <div class="tab-pane fade show active" id="loginForm" role="tabpanel" aria-labelledby="login-tab">
+          <form id="loginFormElement">
+            <div class="form-floating mb-2 mt-3">
+              <input type="email" class="form-control" id="loginEmail" name="email" placeholder="name@example.com" autocomplete="email" required>
+              <label for="loginEmail">Email address</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input type="password" class="form-control" id="loginPassword" name="password" placeholder="Password" autocomplete="current-password" required>
+              <label for="loginPassword">Password</label>
+            </div>
+            <div class="form-check text-start my-3">
+              <input class="form-check-input" type="checkbox" value="remember-me" id="rememberMe">
+              <label class="form-check-label" for="rememberMe">
+                Remember me
+              </label>
+            </div>
+            <button class="btn btn-primary w-100 py-2" type="submit">
+              <span class="spinner-border spinner-border-sm" id="loginSpinner" role="status" aria-hidden="true"></span>
+              Sign in
+            </button>
+            <div class="text-center mt-2">
+              <a href="#" class="text-decoration-none" id="forgotPasswordLink">Forgot password?</a>
+            </div>
+          </form>
+        </div>
+        
+        <!-- Registration Form -->
+        <div class="tab-pane fade" id="registerForm" role="tabpanel" aria-labelledby="register-tab">
+          <form id="registerFormElement">
+            <div class="form-floating mb-2 mt-3">
+              <input type="text" class="form-control" id="registerName" name="name" placeholder="Full Name" autocomplete="name" required>
+              <label for="registerName">Full Name</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input type="email" class="form-control" id="registerEmail" name="email" placeholder="name@example.com" autocomplete="email" required>
+              <label for="registerEmail">Email address</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input type="password" class="form-control" id="registerPassword" name="password" placeholder="Password" autocomplete="new-password" required minlength="8">
+              <label for="registerPassword">Password</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" autocomplete="new-password" required minlength="8">
+              <label for="confirmPassword">Confirm Password</label>
+            </div>
+            <div class="form-check text-start my-3">
+              <input class="form-check-input" type="checkbox" value="agree-terms" id="agreeTerms" required>
+              <label class="form-check-label" for="agreeTerms">
+                I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>
+              </label>
+            </div>
+            <button class="btn btn-success w-100 py-2" type="submit">
+              <span class="spinner-border spinner-border-sm" id="registerSpinner" role="status" aria-hidden="true"></span>
+              Register
+            </button>
+          </form>
+        </div>
+      </div>
+      
+      <p class="mt-5 mb-3 text-body-secondary text-center">&copy; 2017–2024</p>
+    </div>
+  </main>
+  
+  <!-- Terms and Conditions Modal -->
+  <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>By using this service, you agree to the following terms:</p>
+          <ul>
+            <li>Your data will be handled in accordance with our Privacy Policy</li>
+            <li>You are responsible for maintaining the security of your account</li>
+            <li>You agree not to use the service for any illegal or unauthorized purpose</li>
+            <li>We reserve the right to terminate accounts that violate our terms</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="agreeButton">I Agree</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Get DOM elements
+      const loginTab = document.getElementById('login-tab');
+      const registerTab = document.getElementById('register-tab');
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+      const loginFormElement = document.getElementById('loginFormElement');
+      const registerFormElement = document.getElementById('registerFormElement');
+      const successMessage = document.getElementById('successMessage');
+      const errorMessage = document.getElementById('errorMessage');
+      const loginSpinner = document.getElementById('loginSpinner');
+      const registerSpinner = document.getElementById('registerSpinner');
+      const agreeButton = document.getElementById('agreeButton');
+      
+      // Terms modal agreement
+      agreeButton.addEventListener('click', function() {
+        document.getElementById('agreeTerms').checked = true;
+      });
+      
+      // Tab switching logic
+      function switchToTab(tabElement) {
+        // Remove active class from all tabs and tab panes
+        document.querySelectorAll('#authTabs button').forEach(el => {
+          el.classList.remove('active');
+          el.setAttribute('aria-selected', 'false');
+        });
+        
+        document.querySelectorAll('.tab-pane').forEach(el => {
+          el.classList.remove('show', 'active');
+        });
+        
+        // Add active class to selected tab and tab pane
+        tabElement.classList.add('active');
+        tabElement.setAttribute('aria-selected', 'true');
+        
+        const target = document.querySelector(tabElement.getAttribute('data-bs-target'));
+        target.classList.add('show', 'active');
+      }
+      
+      // Add tab switching event listeners
+      loginTab.addEventListener('click', function() {
+        switchToTab(loginTab);
+      });
+      
+      registerTab.addEventListener('click', function() {
+        switchToTab(registerTab);
+      });
+      
+      // Check for remembered user
+      const rememberedUser = localStorage.getItem('rememberedUser');
+      
+      if (rememberedUser) {
+        try {
+          const userData = JSON.parse(rememberedUser);
+          document.getElementById('loginEmail').value = userData.email;
+          document.getElementById('rememberMe').checked = true;
+        } catch (e) {
+          localStorage.removeItem('rememberedUser');
+          console.error('Error parsing remembered user data:', e);
+        }
+      }
+      
+      // Helper functions for showing messages
+      function showSuccess(message) {
+        successMessage.textContent = message;
+        successMessage.style.display = 'block';
+        errorMessage.style.display = 'none';
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+          successMessage.style.display = 'none';
+        }, 5000);
+      }
+      
+      function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.style.display = 'block';
+        successMessage.style.display = 'none';
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+          errorMessage.style.display = 'none';
+        }, 5000);
+      }
+      
+      // Login form submission
+      loginFormElement.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        // Show loading spinner
+        loginSpinner.style.display = 'inline-block';
+        
+        // Get form values
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        const rememberMe = document.getElementById('rememberMe').checked;
+        
+        // Store email if remember me is checked
+        if (rememberMe) {
+          localStorage.setItem('rememberedUser', JSON.stringify({
+            email: email,
+            timestamp: new Date().toISOString()
+          }));
+        } else {
+          localStorage.removeItem('rememberedUser');
+        }
+        
+        // Simulate API call with timeout
+        setTimeout(() => {
+          // Hide spinner
+          loginSpinner.style.display = 'none';
+          
+          // In a real app, you would validate credentials with your server
+          // For this demo, we'll simulate a successful login
+          showSuccess('Login successful! Redirecting...');
+          
+          // Simulate redirect after successful login
+          setTimeout(() => {
+            // In a real app: window.location.href = '/dashboard';
+            alert('Redirecting to dashboard...');
+          }, 1500);
+        }, 1000);
+      });
+      
+      // Registration form submission
+      registerFormElement.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        // Show loading spinner
+        registerSpinner.style.display = 'inline-block';
+        
+        // Get form values
+        const name = document.getElementById('registerName').value;
+        const email = document.getElementById('registerEmail').value;
+        const password = document.getElementById('registerPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const agreeTerms = document.getElementById('agreeTerms').checked;
+        
+        // Basic validation
+        if (!agreeTerms) {
+          showError('You must agree to the Terms and Conditions.');
+          registerSpinner.style.display = 'none';
+          return;
+        }
+        
+        if (password !== confirmPassword) {
+          showError('Passwords do not match.');
+          registerSpinner.style.display = 'none';
+          return;
+        }
+        
+        if (password.length < 8) {
+          showError('Password must be at least 8 characters long.');
+          registerSpinner.style.display = 'none';
+          return;
+        }
+        
+        // Simulate API call with timeout
+        setTimeout(() => {
+          // Hide spinner
+          registerSpinner.style.display = 'none';
+          
+          // In a real app, you would send registration data to your server
+          // For this demo, we'll simulate a successful registration
+          showSuccess('Registration successful! You are now logged in.');
+          
+          // Auto-login after registration
+          // 1. Switch to login tab
+          switchToTab(loginTab);
+          
+          // 2. Fill in the login form with registration details
+          document.getElementById('loginEmail').value = email;
+          document.getElementById('loginPassword').value = password;
+          document.getElementById('rememberMe').checked = true;
+          
+          // 3. Store email in localStorage
+          localStorage.setItem('rememberedUser', JSON.stringify({
+            email: email,
+            timestamp: new Date().toISOString()
+          }));
+          
+          // 4. Auto-submit the login form after a short delay
+          setTimeout(() => {
+            loginSpinner.style.display = 'inline-block';
+            
+            setTimeout(() => {
+              loginSpinner.style.display = 'none';
+              showSuccess('Login successful! Redirecting...');
+              
+              // Simulate redirect after successful login
+              setTimeout(() => {
+                // In a real app: window.location.href = '/dashboard';
+                alert('Redirecting to dashboard...');
+              }, 1500);
+            }, 1000);
+          }, 1000);
+        }, 1500);
+      });
+      
+      // Forgot password link handling
+      document.getElementById('forgotPasswordLink').addEventListener('click', function(event) {
+        event.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        
+        if (email) {
+          alert(`Password reset link would be sent to: ${email}`);
+        } else {
+          alert('Please enter your email address first.');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

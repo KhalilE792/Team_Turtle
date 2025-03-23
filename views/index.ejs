@@ -1,4 +1,17 @@
-<h1> hi <%= name %></h1>
-<form action="/logout?_method" method="POST">
-  <button type="submit">Log Out</button>
-</form>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Page</title>
+</head>
+<body>
+  <h1>hi <span id="name"></span></h1>
+  <form action="/logout?_method" method="POST">
+    <button type="submit">Log Out</button>
+  </form>
+</body>
+<script>
+  // This script would populate the name from a variable
+  // In a real application, this would be handled by your server-side templating
+  document.getElementById('name').textContent = "Username"; // Replace with actual name
+</script>
+</html>
