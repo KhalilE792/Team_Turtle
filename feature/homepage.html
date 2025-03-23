@@ -2,8 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="homepage.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
     <title>Buttons</title>
     <style>
       .button {
@@ -16,16 +16,22 @@
         border: none;
         border-radius: 5px;
         margin-top: 20%;
-        margin-bottom: 60%;
+        margin-bottom: 25%; /*change back to 25% later!!!!*/
         margin-left: 30px;    
         color: #fff;
         background-color: #007bff;
+        height: 100%;
+        background-position:center;
+        background-repeat:no-repeat;
+        background-size:cover;
       }
       .button-container {
-          display: flex;
-          justify-content: flex-end;   /* Aligns buttons to the right */
-          align-items: center;         /* Optional: Centers buttons vertically */
-          gap: 10px;                   /* Optional: Adds space between buttons */
+        display: flex;
+        gap: 30px;
+        position: relative;
+        top: 400px;
+        align-items: flex-end;
+        margin-left: 60vh;
         }
 
       .button:hover {
@@ -38,20 +44,31 @@
         width: 300px;
         height: 275px;
         align-content: center;
-        top: 10%;
+        top: 50%;
         left: 42%;
         position: absolute;
+      }
+      body{
+        background-image: url("Upbackground.png");
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: cover;
+        font-family: Arial, sans-serif;
+        color: black;
+        text-align: center;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
       }
     </style>
   </head>
   <body>
-    <h1 align="center"> Your moneygotchi</h1>
-    <button class="button" style="background-color: #28a745;">Stats Button</button>
-    <button class="button" style="background-color: #007bff;">Update Button</button>
-    <button class="button" style="background-color: #dc3545;">Fortune Teller Button</button>
-    <div class ="rectangle" style= "background-color:gray">Place Holder for tomagostchi</div>
-
-    
+    <div class ="rectangle" style= "background-color:white">Moneygotchi</div>
+      <div class="button-container">
+        <button class="button" style="background-color: #28a745;">Stats Button</button>
+        <button class="button" style="background-color: #007bff;">Update Button</button>
+        <button class="button" style="background-color: #dc3545;">Fortune Teller Button</button> 
+    <a href="Green White Pixel Illustrated Blank Note A4 Document.png"></a>
 </body>
 </html>
 
