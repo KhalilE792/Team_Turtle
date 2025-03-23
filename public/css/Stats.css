@@ -2,9 +2,19 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 20px;
-    background-image: url("3.png");
+    background-image: url("/images/3.png");
     background-position: 5px;
     color: #333;
+}
+
+/* New flexbox layout for the page */
+.page-layout {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 /* Home Button Styles */
@@ -42,8 +52,8 @@ body {
 }
 
 .container {
-    max-width: 1000px;
-    margin: 0 auto;
+    flex: 1;
+    max-width: 800px;
     background-color: white;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -99,6 +109,23 @@ select:hover, select:focus {
     box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
+/* Styling for the side image container */
+.side-image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+    width: 200px;
+}
+
+/* Style for the image itself */
+.side-image {
+    max-width: 100%;
+    max-height: 380px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
 .stats-container {
     display: flex;
     justify-content: space-around;
@@ -140,7 +167,7 @@ select:hover, select:focus {
     border-top: 1px solid #eee;
 }
 
-/* Responsive styles for the home button */
+/* Responsive styles */
 @media (max-width: 768px) {
     .home-button-container {
         top: 10px;
@@ -150,6 +177,21 @@ select:hover, select:focus {
     .home-button {
         padding: 8px 12px;
         font-size: 14px;
+    }
+    
+    .page-layout {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .container {
+        max-width: 100%;
+    }
+    
+    .side-image-container {
+        width: 40%;
+        margin-bottom: 20px;
+        order: -1; /* Places the image at the top on mobile */
     }
 }
 
@@ -167,58 +209,8 @@ select:hover, select:focus {
     body {
         padding: 10px;
     }
-
-    /* New container for the chart and image */
-.chart-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    gap: 20px; /* Space between chart and image */
-}
-
-/* Modify the chart container to take less width */
-.chart-container {
-    position: relative;
-    height: 400px;
-    width: 70%; /* Reduced from 100% to make room for image */
-    padding: 10px;
-    border-radius: 8px;
-    background-color: #fafafa;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
-}
-
-/* Style for the image container */
-.chart-image {
-    width: 25%; /* Adjust based on desired image size */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Style for the image itself */
-.side-image {
-    max-width: 100%;
-    max-height: 380px; /* Slightly less than chart height */
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .chart-section {
-        flex-direction: column;
-    }
     
-    .chart-container {
-        width: 100%;
-        margin-bottom: 20px;
+    .side-image-container {
+        width: 60%;
     }
-    
-    .chart-image {
-        width: 80%;
-        margin: 0 auto;
-    }
-}
 }

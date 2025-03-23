@@ -13,44 +13,48 @@
             <span class="home-icon">⌂</span> Home
         </a>
     </div>
-
-    <div class="container">
-        <h1>Spending Tracker</h1>
-        <div class="controls">
-            <label for="timeSelector">Select Time Period:</label>
-            <select id="timeSelector">
-                <option value="week">Week</option>
-                <option value="month">Month</option>
-                <option value="year">Year</option>
-            </select>
-        </div>
-        <div class="chart-section">
+    
+    <!-- New wrapper div for flexbox layout -->
+    <div class="page-layout">
+        <!-- Main container -->
+        <div class="container">
+            <h1>Spending Tracker</h1>
+            <div class="controls">
+                <label for="timeSelector">Select Time Period:</label>
+                <select id="timeSelector">
+                    <option value="week">Week</option>
+                    <option value="month">Month</option>
+                    <option value="year">Year</option>
+                </select>
+            </div>
             <div class="chart-container">
                 <canvas id="dataChart"></canvas>
             </div>
-            <div class="chart-image">
-                <img src="/images/stats_pig.png" alt="Spending visualization" class="side-image">
+            <div class="stats-container">
+                <div class="stat-item">
+                    <span class="stat-label">Average Spending:</span>
+                    <span id="averageSpending" class="stat-value">$0.00</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Highest Spending:</span>
+                    <span id="highestSpending" class="stat-value">$0.00</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Total Spending:</span>
+                    <span id="totalSpending" class="stat-value">$0.00</span>
+                </div>
+            </div>
+            <div class="info">
+                <p>Track your spending patterns over different time periods.</p>
             </div>
         </div>
-        <div class="stats-container">
-            <div class="stat-item">
-                <span class="stat-label">Average Spending:</span>
-                <span id="averageSpending" class="stat-value">$0.00</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">Highest Spending:</span>
-                <span id="highestSpending" class="stat-value">$0.00</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">Total Spending:</span>
-                <span id="totalSpending" class="stat-value">$0.00</span>
-            </div>
-        </div>
-        <div class="info">
-            <p>Track your spending patterns over different time periods.</p>
+        
+        <!-- Pig image outside the container -->
+        <div class="side-image-container">
+            <img src="/images/stats_pig.png" alt="Spending visualization" class="side-image">
         </div>
     </div>
-
+    
     <script src="/js/Stats.js"></script>
-
+</body>
 </html>

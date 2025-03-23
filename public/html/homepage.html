@@ -1,41 +1,197 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Moneygotchi</title>
-<link rel="stylesheet" href="/css/homepage.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moneygotchi</title>
+    <link rel="stylesheet" href="/css/homepage.css">
 </head>
 <body>
-<h1>Moneygotchi</h1>
+    <h1>Moneygotchi</h1>
 <div class="rectangle">
-<img src="/images/normal_pig.png" alt="Moneygotchi Pig" class="pet-image">
+    <!-- Health bar positioned in upper left corner -->
+    <div class="health-container">
+        <div class="health-bar health-normal" id="health-bar"></div>
+    </div>
+    
+    <!-- Add emoji container above the pig -->
+    <div class="emoji-container" id="emoji-container">😊</div>
+    
+    <img src="/images/normal_pig.png" alt="Moneygotchi Pig" class="pet-image" id="pet-image">
 </div>
 <div class="button-container">
-<button class="button stats-button" aria-label="Stats" id="stats-button">
-  <img src="/images/stats-icon.png" alt="Stats" class="button-icon">
-</button>
-<button class="button update-button" aria-label="Update" id="update-button">
-  <img src="/images/update-icon.png" alt="Update" class="button-icon">
-</button>
-<button class="button fortune-button" aria-label="Fortune Teller" id="fortune-button">
-  <img src="/images/fortune-icon.png" alt="Fortune Teller" class="button-icon">
-</button>
+    <button class="button stats-button" aria-label="Stats" id="stats-button">
+        <div class="stats-icon">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+    </button>
+    <button class="button update-button" aria-label="Interact" id="update-button">
+        <div class="update-icon"></div>
+    </button>
+    <button class="button fortune-button" aria-label="Fortune Teller" id="fortune-button">
+        <div class="fortune-icon"></div>
+    </button>
 </div>
-
 <script>
-  // Add click event listeners to buttons
-  document.getElementById('stats-button').addEventListener('click', function() {
+function checkFinancialHealth() {
+    // Get the saved data
+    const savedData = JSON.parse(localStorage.getItem('financialData')) || [];
+    const medianSpending = parseFloat(localStorage.getItem('medianSpending') || '0');
+    
+    // Default status if no data is available
+    let status = 'normal';
+    let healthPercentage = 50;
+    
+    // Log the data we're working with for debugging
+    console.log("Financial health check:", {
+        savedData: savedData,
+        medianSpending: medianSpending
+    });
+    
+    if (savedData.length > 0) {
+        const latestData = savedData[savedData.length - 1];
+        const annualIncome = parseInt(latestData.annualIncome) || 0;
+        const monthlyIncome = annualIncome / 12;
+        
+        // Log monthly income for debugging
+        console.log("Monthly income:", monthlyIncome);
+        
+        // If median spending data exists, use it
+        if (medianSpending > 0) {
+            // Calculate monthly values
+            const currentYear = new Date().getFullYear();
+            const yearsUntilRetirement = latestData.retirementYear - currentYear;
+            const monthsUntilRetirement = yearsUntilRetirement * 12;
+            
+            let monthlySavingsNeeded = 0;
+            if (monthsUntilRetirement > 0) {
+                monthlySavingsNeeded = parseInt(latestData.targetSavings) / monthsUntilRetirement;
+            } else {
+                monthlySavingsNeeded = parseInt(latestData.targetSavings);
+            }
+            
+            // Monthly metrics
+            const spendingPercentage = (medianSpending / monthlyIncome) * 100;
+            const savingsPercentage = (monthlySavingsNeeded / monthlyIncome) * 100;
+            const remainingPercentage = 100 - spendingPercentage - savingsPercentage;
+            
+            // Log all calculations for debugging
+            console.log("Financial calculations:", {
+                monthlySavingsNeeded: monthlySavingsNeeded,
+                spendingPercentage: spendingPercentage,
+                savingsPercentage: savingsPercentage,
+                remainingPercentage: remainingPercentage
+            });
+            
+            // Clear status determination based on remaining budget
+            if (remainingPercentage < 0) {
+                // In deficit - your expenses plus savings exceed income
+                status = 'bad';
+                healthPercentage = Math.max(10, 30 + remainingPercentage); // Min 10%, decreases with deficit
+            } else if (remainingPercentage < 15) {
+                // Very tight budget - less than 15% buffer
+                status = 'bad';
+                healthPercentage = 40;
+            } else if (remainingPercentage < 30) {
+                // Manageable but tight budget
+                status = 'normal';
+                healthPercentage = 60;
+            } else {
+                // Healthy budget with good buffer
+                status = 'good';
+                healthPercentage = 85;
+            }
+        } else {
+            // No spending data, but we have income data
+            status = 'normal';
+            healthPercentage = 50;
+        }
+    }
+    
+    // Log final determination
+    console.log("Health status determined:", status, healthPercentage);
+    
+    return {
+        status: status,
+        healthPercentage: healthPercentage
+    };
+}
+
+// Function to update the pet image, health bar, and emoji based on financial health
+function updatePetStatus() {
+    const petImage = document.getElementById('pet-image');
+    const healthBar = document.getElementById('health-bar');
+    const emojiContainer = document.getElementById('emoji-container');
+    const healthStatus = checkFinancialHealth();
+    
+    // Update health bar percentage and style
+    healthBar.style.width = healthStatus.healthPercentage + '%';
+    
+    // Remove all status classes
+    healthBar.classList.remove('health-good', 'health-normal', 'health-bad');
+    
+    // Add appropriate class based on status and update emoji
+    switch(healthStatus.status) {
+        case 'good':
+            healthBar.classList.add('health-good');
+            petImage.src = '/images/rich_pig.png';
+            emojiContainer.textContent = '💖'; // Golden heart emoji
+            break;
+        case 'normal':
+            healthBar.classList.add('health-normal');
+            petImage.src = '/images/normal_pig.png';
+            emojiContainer.textContent = '😊'; // Happy face emoji
+            break;
+        case 'bad':
+            healthBar.classList.add('health-bad');
+            petImage.src = '/images/hungry_pig.png';
+            emojiContainer.textContent = '💀'; // Skull emoji
+            break;
+    }
+}
+
+// Function to show emoji when update button is clicked
+function showEmoji() {
+    const emojiContainer = document.getElementById('emoji-container');
+    emojiContainer.classList.add('show');
+    
+    // Hide emoji after 3 seconds
+    setTimeout(() => {
+        emojiContainer.classList.remove('show');
+    }, 3000);
+}
+
+// Add click event listeners to buttons
+document.getElementById('stats-button').addEventListener('click', function() {
     window.location.href = '/html/stats.html';
-  });
-  
-  document.getElementById('update-button').addEventListener('click', function() {
-    window.location.href = '/update.html';
-  });
-  
-  document.getElementById('fortune-button').addEventListener('click', function() {
+});
+
+document.getElementById('update-button').addEventListener('click', function() {
+    // Show emoji animation
+    showEmoji();
+    
+    // Optional: refresh pet status when update button is clicked
+    updatePetStatus();
+    
+    // Optional: if you still want to navigate to update page, add a delay
+    // setTimeout(function() {
+    //     window.location.href = '/update.html';
+    // }, 1500);
+});
+
+document.getElementById('fortune-button').addEventListener('click', function() {
     window.location.href = '/html/FortuneTeller.html';
-  });
+});
+
+// Update pet status when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    updatePetStatus();
+});
+
+// Also check for updates every minute
+setInterval(updatePetStatus, 60000);
 </script>
 </body>
 </html>
