@@ -1,0 +1,224 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-image: url("3.png");
+    background-position: 5px;
+    color: #333;
+}
+
+/* Home Button Styles */
+.home-button-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+}
+
+.home-button {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: white;
+    color: #0077cc;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    font-size: 16px;
+}
+
+.home-button:hover {
+    background-color: #0077cc;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.home-icon {
+    font-size: 18px;
+    margin-right: 5px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.controls {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.controls label {
+    margin-right: 10px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+select {
+    padding: 10px 15px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    background-color: white;
+    font-size: 16px;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.3s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+select:hover, select:focus {
+    border-color: #0077cc;
+}
+
+.chart-container {
+    position: relative;
+    height: 400px;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #fafafa;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.stats-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.stat-item {
+    text-align: center;
+    padding: 10px 15px;
+    min-width: 150px;
+}
+
+.stat-label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+}
+
+.stat-value {
+    display: block;
+    font-size: 20px;
+    font-weight: bold;
+    color: #0077cc;
+}
+
+.info {
+    margin-top: 20px;
+    color: #666;
+    text-align: center;
+    font-size: 14px;
+    padding: 10px;
+    border-top: 1px solid #eee;
+}
+
+/* Responsive styles for the home button */
+@media (max-width: 768px) {
+    .home-button-container {
+        top: 10px;
+        right: 10px;
+    }
+    
+    .home-button {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .home-button {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+    
+    .home-icon {
+        font-size: 14px;
+        margin-right: 3px;
+    }
+    
+    body {
+        padding: 10px;
+    }
+
+    /* New container for the chart and image */
+.chart-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    gap: 20px; /* Space between chart and image */
+}
+
+/* Modify the chart container to take less width */
+.chart-container {
+    position: relative;
+    height: 400px;
+    width: 70%; /* Reduced from 100% to make room for image */
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #fafafa;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Style for the image container */
+.chart-image {
+    width: 25%; /* Adjust based on desired image size */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Style for the image itself */
+.side-image {
+    max-width: 100%;
+    max-height: 380px; /* Slightly less than chart height */
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .chart-section {
+        flex-direction: column;
+    }
+    
+    .chart-container {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    
+    .chart-image {
+        width: 80%;
+        margin: 0 auto;
+    }
+}
+}
