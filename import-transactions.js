@@ -13,7 +13,7 @@ async function importCSV() {
     console.log('starting importCSV...')
     try {
         // Use the specific user ID
-        const userId = '67dfde5821608cbfd1ad0b8e'
+        const userId = '67dfa9715f7a6f9e9745bf23'
 
         const results = []
         console.log('Starting CSV import...')
@@ -21,7 +21,7 @@ async function importCSV() {
         await new Promise((resolve, reject) => {
             console.log('Reading CSV file...')
             // fs.createReadStream('./csv/50000.csv')
-            fs.createReadStream('./csv/stableTrend.csv')
+            fs.createReadStream('./csv/regular-man.csv')
                 .pipe(csv())
                 .on('data', (data) => {
                     results.push(data)

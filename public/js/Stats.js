@@ -33,43 +33,41 @@ function processTransactionsFromMongoDB(transactions) {
             const date = new Date(`${month} ${day}, ${fullYear}`);
 
             // Get amount from either withdrawals or deposits
-            let amount = 0;
+            let amountTotal = 0;
+            let amountW = 0;
+            let amountD = 0;
             
             // Check withdrawals first
             if (transaction.withdrawals && transaction.withdrawals !== '00.00') {
                 // Remove commas and convert to number
-                amount = parseFloat(transaction.withdrawals.replace(/,/g, ''));
-                console.log(`Found withdrawal amount: ${amount} for date: ${transaction.date}`);
+                amountW = parseFloat(transaction.withdrawals.replace(/,/g, ''));
+                console.log(`Found withdrawal amount: ${amountW} for date: ${transaction.date}`);
             }
             
             // If no withdrawal, check deposits
-            if (amount === 0 && transaction.deposits && transaction.deposits !== '00.00') {
+            if (amountD === 0 && transaction.deposits && transaction.deposits !== '00.00') {
                 // Remove commas and convert to number
-                amount = parseFloat(transaction.deposits.replace(/,/g, ''));
-                console.log(`Found deposit amount: ${amount} for date: ${transaction.date}`);
+                amountD = parseFloat(transaction.deposits.replace(/,/g, ''));
+                console.log(`Found deposit amount: ${amountD} for date: ${transaction.date}`);
             }
 
-            // Skip if still no amount
-            if (!amount || isNaN(amount)) {
-                console.log(`No valid amount found for transaction on ${transaction.date}`);
-                return;
-            }
+            amountTotal = amountD - amountW
 
             // Update weekly data
             const dayOfWeek = date.getDay();
             const adjustedDayOfWeek = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-            result.week.values[adjustedDayOfWeek] += amount;
-            console.log(`Added ${amount} to day ${adjustedDayOfWeek} (${result.week.labels[adjustedDayOfWeek]})`);
+            result.week.values[adjustedDayOfWeek] += amountD - amountW;
+            console.log(`Added ${amountTotal} to day ${adjustedDayOfWeek} (${result.week.labels[adjustedDayOfWeek]})`);
 
             // Update monthly data
             const weekOfMonth = Math.min(3, Math.floor((parseInt(day) - 1) / 7));
-            result.month.values[weekOfMonth] += amount;
-            console.log(`Added ${amount} to week ${weekOfMonth + 1}`);
+            result.month.values[weekOfMonth] += amountD - amountW;
+            console.log(`Added ${amountTotal} to week ${weekOfMonth + 1}`);
 
             // Update yearly data
             const monthIndex = date.getMonth();
-            result.year.values[monthIndex] += amount;
-            console.log(`Added ${amount} to month ${monthIndex} (${result.year.labels[monthIndex]})`);
+            result.year.values[monthIndex] += amountD - amountW;
+            console.log(`Added ${amountTotal} to month ${monthIndex} (${result.year.labels[monthIndex]})`);
 
         } catch (error) {
             console.error("Error processing transaction:", error, transaction);
