@@ -1,71 +1,26 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-    <title>Buttons</title>
-    <style>
-      .button {
-        display: inline-block;
-        padding: 10px 10px;
-        font-size: 20px;
-        cursor: pointer;
-        text-decoration: none;
-        outline: none;
-        border: none;
-        border-radius: 5px;
-        margin-top: 20%;
-        margin-bottom: 25%; /*change back to 25% later!!!!*/
-        margin-left: 30px;    
-        color: #fff;
-        background-color: #007bff;
-      }
-      .button-container {
-        display: flex;
-        gap: 30px;
-        position: relative;
-        top: 280px;
-        align-items: flex-end;
-        margin-left: 360px;
-        }
-
-      .button:hover {
-        background-color: #0056b3;
-      }
-      .button:active {
-        background-color: #004085;
-      }
-      .rectangle{
-        width: 300px;
-        height: 275px;
-        align-content: center;
-        top: 60%;
-        left: 42%;
-      }
-      .h1{
-        top:56%;
-        
-      }
-      body{
-        background-image: url("Upbackground.png");
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: cover;
-        font-family: Arial, sans-serif;
-        text-align: center;
-      }
-    </style>
-  </head>
-  <body>
-    <h1 align="center"> Moneygotchi</h1>
-    <div class ="rectangle" style= "background-color:black">Moneygotchi</div>
-      <div class="button-container">
-        <button class="button" style="background-color: #28a745;">Stats Button</button>
-        <button class="button" style="background-color: #007bff;">Update Button</button>
-        <button class="button" style="background-color: #dc3545;">Fortune Teller Button</button> 
-    <a href="Green White Pixel Illustrated Blank Note A4 Document.png"></a>
+    <title>Moneygotchi</title>
+    <link rel="stylesheet" href="homepage.css">
+</head>
+<body>
+    <h1>Moneygotchi</h1>
+    <div class="rectangle">
+    <img src="normal_pig.png" alt="Moneygotchi Pig" class="pet-image">
+</div>
+    <div class="button-container">
+        <button class="button stats-button" aria-label="Stats">
+            <img src="stats-icon.png" alt="Stats" class="button-icon">
+        </button>
+        <button class="button update-button" aria-label="Update">
+            <img src="update-icon.png" alt="Update" class="button-icon">
+        </button>
+        <button class="button fortune-button" aria-label="Fortune Teller">
+            <img src="fortune-icon.png" alt="Fortune Teller" class="button-icon">
+        </button>
+    </div>
 </body>
 </html>
-
-
