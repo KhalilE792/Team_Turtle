@@ -2,7 +2,7 @@ require('dotenv').config()
 const fs = require('fs')
 const csv = require('csv-parser')
 const mongoose = require('mongoose')
-const Transaction = require('./models/transaction')
+const Transaction = require('../models/transaction')
 
 mongoose.connect(process.env.DATABASE_URL)
 const db = mongoose.connection
