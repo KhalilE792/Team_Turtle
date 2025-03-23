@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const Transaction = require('../models/transaction')
+const path = require('path')
 
 
 // Get transactions by year
@@ -138,6 +139,10 @@ router.delete('/:id', getTransactions, async (req,res) => {
 
 })
 
+// Add this route to serve the Stats page
+router.get('/stats', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/Stats.html'))
+})
 
 async function getTransactions(req,res,next) {
     let transaction
