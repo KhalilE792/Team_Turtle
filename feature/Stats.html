@@ -20,7 +20,6 @@
         <div class="controls">
             <label for="timeSelector">Select Time Period:</label>
             <select id="timeSelector" onchange="updateChart()">
-                <option value="day">Day</option>
                 <option value="week">Week</option>
                 <option value="month">Month</option>
                 <option value="year">Year</option>
@@ -31,7 +30,7 @@
                 <canvas id="dataChart"></canvas>
             </div>
             <div class="chart-image">
-                <img src="your-image.jpg" alt="Spending visualization" class="side-image">
+                <img src="stats_pig.png" alt="Spending visualization" class="side-image">
             </div>
         </div>
         <div class="stats-container">
@@ -59,112 +58,13 @@
         let data = {};
         
         /**
-         * Flexible function to process JSON data regardless of format
-         * This function will try to extract relevant data from various possible JSON structures
-         * @param {Object} jsonData - The raw JSON data from your teammate
+         * Process MongoDB transaction data into chart format
+         * @param {Array} transactions - Array of transaction objects from MongoDB
          * @return {Object} Processed data in the format needed for the chart
          */
-        function processJSONData(jsonData) {
-            // Initialize our result object with the structure our chart expects
-            const processedData = {
-                day: { labels: [], values: [] },
-                week: { labels: [], values: [] },
-                month: { labels: [], values: [] },
-                year: { labels: [], values: [] }
-            };
+        function processTransactionsFromMongoDB(transactions) {
+            console.log("Processing MongoDB transactions:", transactions);
             
-            try {
-                // Case 1: JSON is already in our expected format
-                if (jsonData.day && jsonData.week && jsonData.month && jsonData.year) {
-                    console.log("JSON already in expected format");
-                    return jsonData;
-                }
-                
-                // Case 2: JSON has separate arrays for different time periods
-                if (jsonData.dailyData || jsonData.weeklyData || jsonData.monthlyData || jsonData.yearlyData) {
-                    console.log("Processing data with separate arrays");
-                    
-                    const dailyData = jsonData.dailyData || jsonData.daily || jsonData.dayData || [];
-                    const weeklyData = jsonData.weeklyData || jsonData.weekly || jsonData.weekData || [];
-                    const monthlyData = jsonData.monthlyData || jsonData.monthly || jsonData.monthData || [];
-                    const yearlyData = jsonData.yearlyData || jsonData.yearly || jsonData.yearData || [];
-                    
-                    // Process daily data
-                    if (dailyData.length > 0) {
-                        processedData.day = extractLabelsAndValues(dailyData);
-                    }
-                    
-                    // Process weekly data
-                    if (weeklyData.length > 0) {
-                        processedData.week = extractLabelsAndValues(weeklyData);
-                    }
-                    
-                    // Process monthly data
-                    if (monthlyData.length > 0) {
-                        processedData.month = extractLabelsAndValues(monthlyData);
-                    }
-                    
-                    // Process yearly data
-                    if (yearlyData.length > 0) {
-                        processedData.year = extractLabelsAndValues(yearlyData);
-                    }
-                }
-                
-                // Case 3: JSON is a flat array of transactions with timestamps
-                else if (Array.isArray(jsonData)) {
-                    console.log("Processing flat array of transactions");
-                    return processTransactionArray(jsonData);
-                }
-                
-                // Case 4: JSON has a records/transactions field which is an array
-                else if (jsonData.records || jsonData.transactions || jsonData.data) {
-                    const transactions = jsonData.records || jsonData.transactions || jsonData.data;
-                    console.log("Processing transactions from records field");
-                    return processTransactionArray(transactions);
-                }
-                
-                // Generate fallback data for any time periods that couldn't be processed
-                if (processedData.day.labels.length === 0) generateFallbackData(processedData, 'day');
-                if (processedData.week.labels.length === 0) generateFallbackData(processedData, 'week');
-                if (processedData.month.labels.length === 0) generateFallbackData(processedData, 'month');
-                if (processedData.year.labels.length === 0) generateFallbackData(processedData, 'year');
-                
-                return processedData;
-            } catch (error) {
-                console.error("Error processing JSON data:", error);
-                // Return fallback data if processing fails
-                generateFallbackData(processedData, 'day');
-                generateFallbackData(processedData, 'week');
-                generateFallbackData(processedData, 'month');
-                generateFallbackData(processedData, 'year');
-                return processedData;
-            }
-        }
-        
-        /**
-         * Helper function to extract labels and values from an array of objects
-         */
-        function extractLabelsAndValues(dataArray) {
-            const result = { labels: [], values: [] };
-            
-            dataArray.forEach(item => {
-                // Try to find the label (could be 'label', 'name', 'period', 'time', etc.)
-                const label = item.label || item.name || item.period || item.time || item.date || 'Unknown';
-                
-                // Try to find the value (could be 'value', 'amount', 'cost', 'spending', etc.)
-                const value = item.value || item.amount || item.cost || item.spending || item.total || 0;
-                
-                result.labels.push(label);
-                result.values.push(typeof value === 'number' ? value : parseFloat(value) || 0);
-            });
-            
-            return result;
-        }
-        
-        /**
-         * Process an array of transactions with timestamps
-         */
-        function processTransactionArray(transactions) {
             const result = {
                 day: { labels: ['12AM', '3AM', '6AM', '9AM', '12PM', '3PM', '6PM', '9PM'], values: [0, 0, 0, 0, 0, 0, 0, 0] },
                 week: { labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], values: [0, 0, 0, 0, 0, 0, 0] },
@@ -172,60 +72,68 @@
                 year: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], values: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }
             };
             
-            // Possible field names for date/time and amount
-            const dateFields = ['date', 'timestamp', 'time', 'dateTime', 'transactionDate', 'createdAt'];
-            const amountFields = ['amount', 'value', 'cost', 'price', 'total', 'spending'];
+            let validTransactions = 0;
+            let invalidDateCount = 0;
+            let zeroAmountCount = 0;
             
             transactions.forEach(transaction => {
-                // Find the date field
-                let dateValue = null;
-                for (const field of dateFields) {
-                    if (transaction[field]) {
-                        dateValue = transaction[field];
-                        break;
+                try {
+                    // Get date from transaction
+                    const date = new Date(transaction.date);
+                    
+                    // Skip if date is invalid
+                    if (isNaN(date.getTime())) {
+                        console.warn("Invalid date:", transaction.date);
+                        invalidDateCount++;
+                        return;
                     }
-                }
-                
-                // Find the amount field
-                let amountValue = 0;
-                for (const field of amountFields) {
-                    if (transaction[field] !== undefined) {
-                        amountValue = typeof transaction[field] === 'number' ? 
-                            transaction[field] : parseFloat(transaction[field]) || 0;
-                        break;
+                    
+                    // Get amount from withdrawals field (spending amount)
+                    let amount = 0;
+                    if (transaction.withdrawals) {
+                        // Remove any non-numeric characters except decimal point
+                        const cleanAmount = transaction.withdrawals.replace(/[^0-9.]/g, '');
+                        amount = parseFloat(cleanAmount) || 0;
                     }
+                    
+                    // Skip if amount is 0
+                    if (amount <= 0) {
+                        zeroAmountCount++;
+                        return;
+                    }
+                    
+                    validTransactions++;
+                    console.log(`Processing transaction: Date=${date.toISOString()}, Amount=${amount}`);
+                    
+                    // Update daily data (by time of day)
+                    const hour = date.getHours();
+                    let dayIndex = Math.floor(hour / 3);
+                    if (dayIndex >= result.day.values.length) dayIndex = result.day.values.length - 1;
+                    result.day.values[dayIndex] += amount;
+                    
+                    // Update weekly data (by day of week)
+                    const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
+                    // Adjust to make Monday = 0, Sunday = 6
+                    const adjustedDayOfWeek = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+                    result.week.values[adjustedDayOfWeek] += amount;
+                    
+                    // Update monthly data (by week of month)
+                    const dayOfMonth = date.getDate();
+                    const weekOfMonth = Math.min(3, Math.floor((dayOfMonth - 1) / 7));
+                    result.month.values[weekOfMonth] += amount;
+                    
+                    // Update yearly data (by month)
+                    const month = date.getMonth(); // 0 = January
+                    result.year.values[month] += amount;
+                } catch (error) {
+                    console.error("Error processing transaction:", error, transaction);
                 }
-                
-                // Skip if we couldn't find a date
-                if (!dateValue) return;
-                
-                // Convert to Date object if it's a string
-                const date = dateValue instanceof Date ? dateValue : new Date(dateValue);
-                
-                // Skip if date is invalid
-                if (isNaN(date.getTime())) return;
-                
-                // Update daily data (by time of day)
-                const hour = date.getHours();
-                let dayIndex = Math.floor(hour / 3);
-                if (dayIndex >= result.day.values.length) dayIndex = result.day.values.length - 1;
-                result.day.values[dayIndex] += amountValue;
-                
-                // Update weekly data (by day of week)
-                const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
-                // Adjust to make Monday = 0, Sunday = 6
-                const adjustedDayOfWeek = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-                result.week.values[adjustedDayOfWeek] += amountValue;
-                
-                // Update monthly data (by week of month)
-                const dayOfMonth = date.getDate();
-                const weekOfMonth = Math.min(3, Math.floor((dayOfMonth - 1) / 7));
-                result.month.values[weekOfMonth] += amountValue;
-                
-                // Update yearly data (by month)
-                const month = date.getMonth(); // 0 = January
-                result.year.values[month] += amountValue;
             });
+            
+            console.log(`Processed ${validTransactions} valid transactions`);
+            console.log(`Skipped ${invalidDateCount} transactions with invalid dates`);
+            console.log(`Skipped ${zeroAmountCount} transactions with zero amounts`);
+            console.log("Processed data:", result);
             
             return result;
         }
@@ -233,70 +141,60 @@
         /**
          * Generate fallback data for a time period if json does not read
          */
-        function generateFallbackData(processedData, period) {
-            switch(period) {
-                case 'day':
-                    processedData.day = {
-                        labels: ['12AM', '3AM', '6AM', '9AM', '12PM', '3PM', '6PM', '9PM'],
-                        values: [0, 0, 4.99, 12.50, 24.75, 8.99, 35.40, 42.15]
-                    };
-                    break;
-                case 'week':
-                    processedData.week = {
-                        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-                        values: [45.20, 28.75, 63.40, 52.18, 89.95, 124.50, 37.80]
-                    };
-                    break;
-                case 'month':
-                    processedData.month = {
-                        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                        values: [285.65, 342.18, 276.90, 304.25]
-                    };
-                    break;
-                case 'year':
-                    processedData.year = {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                        values: [1245.80, 1138.42, 1352.16, 1287.35, 1425.68, 1532.90, 1628.45, 1594.20, 1375.42, 1289.65, 1485.75, 1832.50]
-                    };
-                    break;
-            }
+        function generateFallbackData() {
+            console.log("Generating fallback data");
+            return {
+                day: {
+                    labels: ['12AM', '3AM', '6AM', '9AM', '12PM', '3PM', '6PM', '9PM'],
+                    values: [0, 0, 4.99, 12.50, 24.75, 8.99, 35.40, 42.15]
+                },
+                week: {
+                    labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                    values: [45.20, 28.75, 63.40, 52.18, 89.95, 124.50, 37.80]
+                },
+                month: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    values: [285.65, 342.18, 276.90, 304.25]
+                },
+                year: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    values: [1245.80, 1138.42, 1352.16, 1287.35, 1425.68, 1532.90, 1628.45, 1594.20, 1375.42, 1289.65, 1485.75, 1832.50]
+                }
+            };
         }
 
-        // Function to load JSON data
+        // Function to load data from MongoDB via API
         function loadJSONData() {
-            fetch('spending-data.json')
+            console.log("Attempting to fetch transaction data from API...");
+            
+            // Change this to fetch from your MongoDB API instead of static JSON
+            fetch('/transactions')
                 .then(response => {
+                    console.log("Response status:", response.status);
+                    
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        throw new Error('Database response was not ok: ' + response.status);
                     }
                     return response.json();
                 })
-                .then(jsonData => {
-                    // Process the JSON data regardless of its format
-                    data = processJSONData(jsonData);
+                .then(transactions => {
+                    console.log("Transactions retrieved successfully:", transactions);
+                    
+                    // Check if we have data
+                    if (!transactions || transactions.length === 0) {
+                        console.warn("No transactions found in database, using fallback data");
+                        data = generateFallbackData();
+                    } else {
+                        // Process transactions from MongoDB
+                        data = processTransactionsFromMongoDB(transactions);
+                    }
+                    
                     initChart(); // Initialize chart after data is loaded
                 })
                 .catch(error => {
-                    console.error('Error loading the JSON file:', error);
-                    // Fallback data if JSON fails to load
-                    data = {
-                        day: {
-                            labels: ['12AM', '3AM', '6AM', '9AM', '12PM', '3PM', '6PM', '9PM'],
-                            values: [0, 0, 4.99, 12.50, 24.75, 8.99, 35.40, 1002.15] // Added large value for testing
-                        },
-                        week: {
-                            labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-                            values: [45.20, 28.75, 63.40, 52.18, 89.95, 1124.50, 37.80] // Added large value for testing
-                        },
-                        month: {
-                            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                            values: [285.65, 1342.18, 276.90, 304.25] // Added large value for testing
-                        },
-                        year: {
-                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                            values: [1245.80, 1138.42, 1352.16, 1287.35, 1425.68, 3532.90, 1628.45, 1594.20, 1375.42, 1289.65, 1485.75, 1832.50] // Added large value for testing
-                        }
-                    };
+                    console.error('Error loading from database:', error);
+                    // Fallback data if database connection fails
+                    data = generateFallbackData();
                     initChart();
                 });
         }
@@ -331,8 +229,9 @@
         function initChart() {
             const ctx = document.getElementById('dataChart').getContext('2d');
             
-            // Calculate statistics for the initial view (day)
-            const initialStats = calculateStats(data.day.values);
+            // Start with week view instead of day
+            const initialPeriod = 'week';
+            const initialStats = calculateStats(data[initialPeriod].values);
             updateStatsDisplay(initialStats);
             
             // Create horizontal line annotation plugin
@@ -370,10 +269,10 @@
             chart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: data.day.labels,
+                    labels: data[initialPeriod].labels,
                     datasets: [{
                         label: 'Spending',
-                        data: data.day.values,
+                        data: data[initialPeriod].values,
                         backgroundColor: 'rgba(54, 162, 235, 0.2)',
                         borderColor: 'rgba(54, 162, 235, 1)',
                         borderWidth: 3,
@@ -435,7 +334,7 @@
                         },
                         title: {
                             display: true,
-                            text: 'Daily Spending',
+                            text: 'Weekly Spending',
                             font: {
                                 size: 20,
                                 weight: 'bold'
