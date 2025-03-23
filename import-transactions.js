@@ -17,7 +17,8 @@ async function importCSV() {
         
         await new Promise((resolve, reject) => {
             console.log('Reading CSV file...')
-            fs.createReadStream('./transaction-dataset.csv')
+            fs.createReadStream('./50000.csv')
+            // fs.createReadStream('./transaction-dataset.csv')
                 .pipe(csv())
                 .on('data', (data) => {
                     results.push(data)

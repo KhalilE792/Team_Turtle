@@ -1,0 +1,12 @@
+
+GET http://localhost:3000/transactions
+
+### Get transactions for a specific year
+GET http://localhost:3000/transactions/year/2020
+
+### Get transactions for a specific month
+GET http://localhost:3000/transactions/month/Aug/2020
+
+### Get transactions for the last week
+GET http://localhost:3000/transactions/week
+

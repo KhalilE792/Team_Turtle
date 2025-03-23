@@ -19,7 +19,7 @@ const transactionSchema = new mongoose.Schema({
     },
     balance: {
         type: String,
-        equired: true
+        required: true
     }
 })
 
