@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fortune Teller</title>
+    <title>Mystic Fortune Teller</title>
     <link rel="stylesheet" href="/css/FortuneTeller.css">
 </head>
 <body>
+    <!-- Home Button -->
     <div class="home-button-container">
         <a href="/" class="home-button">
             <span class="home-icon">⌂</span> Home
@@ -14,13 +15,141 @@
     </div>
 
     <div class="container">
-        <h1>Financial Fortune Teller</h1>
-        <div class="crystal-ball">
-            <!-- Crystal ball animation container -->
+        <h1>Fortune Teller</h1>
+        
+        <div class="fortune-section">
+            <div class="crystal-ball">
+                <svg viewBox="0 0 200 200" class="globe">
+                    <!-- Define clip path for the image -->
+                    <defs>
+                        <clipPath id="ball-clip">
+                            <circle cx="100" cy="100" r="65"/>
+                        </clipPath>
+                        
+                        <!-- Radial gradient for the inner glow -->
+                        <radialGradient id="globe-gradient" cx="100" cy="80" r="80" 
+                                        gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="rgba(180, 200, 255, 0.3)"/>
+                            <stop offset="100%" stop-color="rgba(100, 150, 255, 0.05)"/>
+                        </radialGradient>
+                    </defs>
+                    
+                    <!-- Crystal ball outer -->
+                    <circle cx="100" cy="100" r="80" class="globe-outer" />
+                    
+                    <!-- Crystal ball inner glow -->
+                    <circle cx="100" cy="100" r="70" class="globe-inner" />
+                    
+                    <!-- The pig image inside the ball - clipped to stay inside -->
+                    <image xlink:href="/images/fortune_pig.png" x="35" y="35" width="130" height="130" 
+                           clip-path="url(#ball-clip)" class="crystal-image" />
+                    
+                    <!-- Light reflections -->
+                    <circle cx="70" cy="70" r="10" class="reflection" />
+                    <circle cx="80" cy="60" r="5" class="reflection" />
+                    
+                    <!-- Decorative swirls inside globe -->
+                    <path d="M70,100 Q90,70 110,100 T150,100" class="swirl" fill="none" />
+                    <path d="M50,110 Q80,140 110,110 T170,110" class="swirl" fill="none" />
+                    
+                    <!-- Stand base -->
+                    <path d="M60,180 Q100,160 140,180 L150,190 Q100,175 50,190 Z" class="stand" />
+                </svg>
+            </div>
+            
+            <div class="interaction">
+                <button id="info-button">Information</button>
+                <button id="update-button">Update</button>
+            </div>
         </div>
-        <div class="fortune-container">
-            <button id="getFortune" class="fortune-button">Tell My Fortune</button>
-            <div id="fortuneText" class="fortune-text"></div>
+    </div>
+
+    <!-- Modal for Information Input -->
+    <div id="info-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Your Financial Future</h2>
+            <p>Please provide the following information to see your fortune:</p>
+            
+            <form id="finance-form" autocomplete="off">
+                <div class="form-group">
+                    <label for="annual-income">How much do you make a year?</label>
+                    <div class="input-with-spinner">
+                        <input type="number" id="annual-income" name="annual-income" placeholder="Enter annual income" required>
+                        <div class="spinner-buttons">
+                            <button type="button" class="spinner-up">▲</button>
+                            <button type="button" class="spinner-down">▼</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="retirement-year">What year do you want to retire?</label>
+                    <div class="input-with-spinner">
+                        <input type="number" id="retirement-year" name="retirement-year" min="2025" max="2100" placeholder="Enter retirement year" required>
+                        <div class="spinner-buttons">
+                            <button type="button" class="spinner-up">▲</button>
+                            <button type="button" class="spinner-down">▼</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="target-savings">How much money do you want to save for retirement?</label>
+                    <div class="input-with-spinner">
+                        <input type="number" id="target-savings" name="target-savings" placeholder="Enter target savings amount" required>
+                        <div class="spinner-buttons">
+                            <button type="button" class="spinner-up">▲</button>
+                            <button type="button" class="spinner-down">▼</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" id="submit-info">Submit</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal for Update Information Display -->
+    <div id="update-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Your Financial Forecast</h2>
+            <p>Here is your current financial information:</p>
+            
+            <div class="result-container">
+                <div class="result-group">
+                    <span class="result-label">Last Updated:</span>
+                    <span id="result-date" class="result-value">-</span>
+                </div>
+                
+                <div class="result-group">
+                    <span class="result-label">Annual Income:</span>
+                    <span id="result-income" class="result-value">-</span>
+                </div>
+                
+                <div class="result-group">
+                    <span class="result-label">Retirement Year:</span>
+                    <span id="result-year" class="result-value">-</span>
+                </div>
+                
+                <div class="result-group">
+                    <span class="result-label">Target Savings:</span>
+                    <span id="result-savings" class="result-value">-</span>
+                </div>
+                
+                <div class="result-group highlighted">
+                    <span class="result-label">Monthly Savings Needed:</span>
+                    <span id="result-monthly" class="result-value">-</span>
+                </div>
+                
+                <div class="fortune-result">
+                    <h3>Your Fortune</h3>
+                    <p id="result-fortune" class="fortune-text">-</p>
+                </div>
+            </div>
+            
+            <button id="close-update" class="modal-button">Close</button>
         </div>
     </div>
 
